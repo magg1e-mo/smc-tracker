@@ -251,8 +251,10 @@ const DEFAULT_TOPICS = [
 "Mitigation และ Breaker Block",
 "Multi-timeframe: HTF bias สู่ LTF entry",
 "Session และ Killzone (เอเชีย ลอนดอน นิวยอร์ก)",
-"Entry Model และ Risk Management"
+"Entry Model และ Risk Management",
+"ดูตัวอย่างเทรดจริง: Trade Breakdown ทองคำ"
 ];
+const SEED_LINKS = [["EP.01 Bullish Trend (15:54) https://youtu.be/QFzrW-CYs9o","EP.02 Bearish Trend (13:47) https://youtu.be/ntFPB44EPdM","เปิดกราฟมาควรเริ่มหาโครงสร้างจากตรงไหนดี (29:54) https://youtu.be/EI17HjyeIos"],["Market Structure & Inducement 2024 (45:21) https://youtu.be/h_Vwpf1OYUI","Q&A EP.01 ถ้าเจอ Swing กว้าง เข้าออเดอร์ยังไง (44:02) https://youtu.be/3UOQ7zdAPZg"],["EP.03 BOS + CHoCH (13:57) https://youtu.be/r1pur3CQ0Eo","แกะวิธีคิดรายใหญ่: CHoCH จริงหรือหลอกใน LTF (2:35:46, เสริม) https://youtu.be/lCbO1mJrSFg"],[],["Liquidity EP.01 สภาพคล่องคืออะไร (21:34) https://youtu.be/dnhipnkbPbI","Liquidity EP.02 มองสภาพคล่องออก ลดโอกาสโดนกิน (20:50) https://youtu.be/W2piNWDCW0U"],["Inducement หรือ CHoCH ดูยังไงไม่ให้สับสน (39:00) https://youtu.be/__n_Q9OAWR4","3 Step Trade Liquidity Sweep https://youtu.be/YLMAu6sM7ds","Sweep Liquidity Entry Model https://youtu.be/34tivUiaf1w"],["Fibonacci Retracement ใช้ยังไงให้ได้ผล (26:53) https://youtu.be/YVBClvqupec"],["Bullish Order Block (12:36) https://youtu.be/o-Kgkd-9VWg","Bearish Order Block (10:07) https://youtu.be/gfK8kvws504","ทำไมบางกราฟมาไม่ถึงโซน Order Block (15:04) https://youtu.be/MnBGtTO_bII","Order Block Inside Bar (21:51) https://youtu.be/QWJey-tE3yg"],[],["Breaker Block (18:39) https://youtu.be/C0cdj9TJx6I","Hidden Base Zone (19:35) https://youtu.be/n7skwQ8XPV8"],["5 Step High Time Frame (22:34) https://youtu.be/WKUkA4UqROM","4 Step Low Time Frame (14:25) https://youtu.be/t5jEINcfCsM","Multi-Timeframe Confirmation 2 Timeframe (21:49) https://youtu.be/WSQmt6iXcqs"],["Liquidity Asia Session (ชอบเทรดทองห้ามมองข้าม) https://youtu.be/ZQur1BtiKjM","New York Session คอนเฟิร์ม M1 เวลาไหนปลอดภัย https://youtu.be/QL76JbJOGoY"],["Aggressive Entry vs Confirmation Entry (15:44) https://youtu.be/Qy3e16gN5gg","ตกรถจังหวะแรก ควรเข้าที่ไหนดี (31:09) https://youtu.be/iDLgHiV9gJE","วิธีแก้ไม้ใน Low Time Frame (22:41) https://youtu.be/iy3g9ZEeNTU","เทรด SMC ยังไงไม่ให้แพ้บ่อย (30:32) https://youtu.be/SHq5ENt18xA","Indicator คำนวณ Lot (8:49) https://youtu.be/0fMn-n7wFEA"],["EP.04 BUY XAUUSD +8.3RR https://youtu.be/USjIWm-jnN4","EP.08 SELL XAUUSD +12RR https://youtu.be/mImFdmk0p1I","EP.09 SELL XAUUSD สวนโครงสร้าง +11RR https://youtu.be/B5_9D6a8fCY","EP.11 BUY XAUUSD +12RR https://youtu.be/2cuYMkUs3FY","EP.14 SELL XAUUSD +42RR https://youtu.be/z3v_rZf0YOA"]];
 const uid = () => Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4);
 const pad = n => String(n).padStart(2,"0");
 const dkey = d => d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
@@ -270,7 +272,7 @@ const $ = id => document.getElementById(id);
 function parseLink(s){ const m = String(s||"").match(/https?:\/\/\S+/); const url = m ? m[0] : ""; const label = (url ? s.replace(url,"") : s).trim(); return {url, label: label || url}; }
 function linkHtml(s){ const {url,label} = parseLink(s); return url ? `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(label)}</a>` : `<span>${esc(label)}</span>`; }
 function freshState(){
-return { v:1, topics: DEFAULT_TOPICS.map(t => ({id:uid(), title:t, status:"todo", links:[], summary:""})), logs:[] };
+return { v:1, topics: DEFAULT_TOPICS.map((t,i) => ({id:uid(), title:t, status:"todo", links:(SEED_LINKS[i]||[]).slice(), summary:""})), logs:[] };
 }
 function valid(s){ return s && Array.isArray(s.topics) && Array.isArray(s.logs); }
 let state;

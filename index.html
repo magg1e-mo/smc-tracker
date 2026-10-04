@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="SMC Tracker">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#EEF1EC">
+<title>SMC Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+box-sizing:border-box;
+padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#EEF1EC; --panel:#FAFBF8; --ink:#1B2430; --muted:#5E6B78; --line:#D3D9D2;
+--bull:#1F8A70; --bull-soft:#D6ECE4; --miss:#B9C1C8; --gold:#A87A12; --gold-soft:#F3E7C6; --danger:#B4452F;
+--bar:rgba(250,251,248,.92); --scrim:rgba(20,26,33,.38);
+--display:"Kanit",system-ui,sans-serif;
+--body:"Kanit","Noto Sans Thai",-apple-system,system-ui,sans-serif;
+--tabh:62px;
+}
+@media (prefers-color-scheme: dark){
+:root:not([data-theme="light"]){
+--bg:#141A21; --panel:#1C242D; --ink:#E6EBEF; --muted:#9AA7B3; --line:#2E3A46;
+--bull:#3DBE96; --bull-soft:#173A31; --miss:#3C4955; --gold:#E0B44C; --gold-soft:#3A3120; --danger:#E07A63;
+--bar:rgba(28,36,45,.92); --scrim:rgba(0,0,0,.55);
+}
+}
+:root[data-theme="dark"]{
+--bg:#141A21; --panel:#1C242D; --ink:#E6EBEF; --muted:#9AA7B3; --line:#2E3A46;
+--bull:#3DBE96; --bull-soft:#173A31; --miss:#3C4955; --gold:#E0B44C; --gold-soft:#3A3120; --danger:#E07A63;
+--bar:rgba(28,36,45,.92); --scrim:rgba(0,0,0,.55);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(72px + env(safe-area-inset-top,0px));-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-weight:300;font-size:16px;line-height:1.55;-webkit-tap-highlight-color:transparent}
+h1,h2,h3{font-family:var(--display);line-height:1.2;margin:0}
+button,input,textarea,select{font:inherit;color:inherit;font-size:16px}
+button{cursor:pointer;touch-action:manipulation}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+svg{max-width:100%}
+.app{max-width:430px;margin:0 auto;min-height:100%;position:relative;padding-top:calc(66px + env(safe-area-inset-top,0px));padding-bottom:calc(var(--tabh) + 24px)}
+.top{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;z-index:15;background:var(--bg);padding:calc(12px + env(safe-area-inset-top,0px)) 18px 10px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.top h1{font-size:1.45rem;font-weight:700}
+.top .sub{color:var(--muted);font-size:.82rem}
+.streak{display:flex;align-items:baseline;gap:6px}
+.streak b{font-family:var(--display);font-size:2.1rem;line-height:1;color:var(--bull);font-weight:700}
+.streak span{color:var(--muted);font-size:.8rem;line-height:1.2;white-space:nowrap}
+.streak.zero b{color:var(--miss)}
+.view{display:none;padding:0 14px}
+.view.active{display:block}
+.block{margin-top:16px}
+.block>h2{font-size:1.05rem;font-weight:600;margin:0 4px 10px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px}
+.chart{padding:12px 10px 8px}
+.chart svg{display:block;width:100%;height:auto}
+.chart-foot{display:flex;justify-content:space-between;color:var(--muted);font-size:.75rem;padding:2px 2px 0}
+.legend{color:var(--muted);font-size:.8rem;margin:8px 2px 0}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.stat strong{display:block;font-family:var(--display);font-size:1.3rem}
+.stat span{color:var(--muted);font-size:.8rem}
+.today-state{display:flex;align-items:center;gap:10px;margin-bottom:6px;font-size:.92rem}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--miss);flex:none}
+.done .dot{background:var(--bull)}
+label{display:block;font-size:.85rem;color:var(--muted);margin:14px 0 6px}
+input[type=text],input[type=number],textarea,select{
+width:100%;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:11px 12px;min-height:46px;-webkit-appearance:none;appearance:none
+}
+select{background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:34px}
+textarea{resize:vertical;min-height:96px}
+.lines input{margin-bottom:8px}
+.row{display:flex;gap:10px}
+.row>.grow{flex:1;min-width:0}
+.row>.narrow{flex:0 0 96px}
+.btn{border:0;border-radius:14px;min-height:48px;padding:0 18px;background:var(--bull);color:#fff;font-weight:600}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.block-btn{width:100%;margin-top:16px}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.small{min-height:44px;font-size:.92rem;padding:0 14px}
+.hint{color:var(--muted);font-size:.82rem;margin-top:8px;text-align:center}
+.chips{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.chips:empty{display:none}
+.chip{display:flex;align-items:center;gap:8px;text-align:left;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:8px 10px;min-height:44px;font-size:.88rem}
+.chip.on{border-color:var(--bull);background:var(--bull-soft)}
+.chip .ck{flex:none;width:18px;height:18px;border-radius:50%;border:1.5px solid var(--muted)}
+.chip.watched .ck{background:var(--bull);border-color:var(--bull)}
+.chip .open{margin-left:auto;color:var(--bull);font-size:.82rem;flex:none}
+.progress{height:6px;border-radius:99px;background:var(--line);overflow:hidden;margin:2px 0 14px}
+.progress i{display:block;height:100%;background:var(--bull);border-radius:99px}
+ol.topics{list-style:none;padding:0;margin:0}
+.topic{border-top:1px solid var(--line)}
+.topic:first-child{border-top:0}
+.topic-head{display:flex;align-items:center;gap:12px;width:100%;background:none;border:0;padding:12px 2px;min-height:58px;text-align:left}
+.num{font-family:var(--display);font-weight:600;width:2ch;color:var(--muted);flex:none;text-align:right}
+.is-done .num{color:var(--bull)}
+.is-learning .num{color:var(--gold)}
+.t-main{flex:1;min-width:0}
+.t-title{display:block;font-weight:500;font-size:.98rem}
+.is-done .t-title{color:var(--muted)}
+.t-meta{display:block;font-size:.78rem;color:var(--muted)}
+.is-learning .t-meta{color:var(--gold)}
+.is-done .t-meta{color:var(--bull)}
+.chev{color:var(--muted);flex:none;font-size:1.2rem}
+.add-topic{display:flex;gap:8px;margin-top:12px}
+.add-topic input{flex:1;min-width:0}
+.day{margin-top:18px}
+.day:first-child{margin-top:0}
+.day h3{font-size:.9rem;font-weight:600;color:var(--muted);margin-bottom:8px}
+.entry{border-left:3px solid var(--bull);padding:2px 0 2px 12px;margin-bottom:14px}
+.entry .meta{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:.85rem;color:var(--muted)}
+.entry ol{margin:4px 0 0;padding-left:1.2em;font-size:.95rem}
+.entry .q{margin-top:6px;font-size:.88rem;color:var(--gold)}
+.entry a{color:var(--bull);word-break:break-all;font-size:.88rem}
+.x{background:none;border:0;color:var(--muted);min-width:44px;min-height:44px;font-size:1.25rem;margin-right:-10px}
+.empty{color:var(--muted);text-align:center;padding:22px 6px}
+.sync{font-size:.78rem;color:var(--muted);margin:22px 8px 0;text-align:center}
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--bar);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tabs-in{max-width:430px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);height:var(--tabh)}
+.tab{background:none;border:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--muted);font-size:.75rem}
+.tab svg{width:24px;height:24px}
+.tab[aria-selected="true"]{color:var(--bull);font-weight:600}
+.scrim{position:fixed;inset:0;background:var(--scrim);z-index:30;opacity:0;pointer-events:none;transition:opacity .2s}
+.scrim.show{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:31;max-width:430px;margin:0 auto;background:var(--panel);border-radius:22px 22px 0 0;max-height:88%;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+padding:8px 18px calc(22px + env(safe-area-inset-bottom,0px));transform:translateY(105%);transition:transform .26s ease}
+.sheet.show{transform:translateY(0)}
+.grab{width:38px;height:5px;border-radius:99px;background:var(--line);margin:4px auto 12px}
+.sheet h3{font-size:1.15rem;font-weight:600;padding-right:44px}
+.sheet .close{position:absolute;top:10px;right:10px}
+.sheet .status{font-size:.82rem;color:var(--muted);margin-top:4px}
+.links{margin:0;padding:0;list-style:none}
+.links li{display:flex;gap:6px;align-items:center;font-size:.92rem;border-bottom:1px solid var(--line)}
+.links li:last-child{border-bottom:0}
+.links a,.links span{flex:1;min-width:0;word-break:break-all;padding:8px 0}
+.links a{color:var(--bull)}
+.tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px}
+.toast{position:fixed;left:50%;bottom:calc(var(--tabh) + 16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(16px);z-index:40;
+background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;opacity:0;transition:.25s;pointer-events:none;font-size:.92rem;width:max-content;max-width:calc(100% - 32px);text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media (min-width:600px){
+body{padding:24px 0}
+.app{border:1px solid var(--line);border-radius:28px;background:var(--bg);overflow:hidden}
+}
+@media (prefers-reduced-motion: reduce){.toast,.sheet,.scrim{transition:none}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+<div>
+<h1>ตั้งใจหน่อยแม็กกี้ !</h1>
+</div>
+<div class="streak" id="streak"><b>0</b><span>วัน<br>ติดต่อกัน</span></div>
+</header>
+<main class="view active" id="v-today">
+<div class="panel chart">
+<svg id="candles" viewBox="0 0 360 130" role="img" aria-label="กราฟการเรียน 30 วันล่าสุด"></svg>
+<div class="chart-foot"><span id="chartStart"></span><span>วันนี้</span></div>
+</div>
+<p class="legend">แท่งเขียว = เรียนและสรุปแล้ว ขีดเทา = วันที่หายไป</p>
+<div class="stats" id="stats"></div>
+<div class="block">
+<h2>บันทึกวันนี้</h2>
+<div class="panel">
+<div class="today-state" id="todayState"><span class="dot"></span><span></span></div>
+<label for="fTopic">หัวข้อ</label>
+<select id="fTopic"></select>
+<div class="row">
+<div class="grow">
+<label for="fClip">คลิปที่ดู</label>
+<input type="text" id="fClip" placeholder="เลือกด้านล่าง หรือพิมพ์เอง" autocomplete="off">
+</div>
+<div class="narrow">
+<label for="fMin">นาที</label>
+<input type="number" id="fMin" min="0" inputmode="numeric" placeholder="30">
+</div>
+</div>
+<div class="chips" id="clipChips"></div>
+<label>สรุปด้วยคำของตัวเอง 3 บรรทัด</label>
+<div class="lines">
+<input type="text" class="fLine" placeholder="1. คลิปนี้สอนอะไร" enterkeyhint="next">
+<input type="text" class="fLine" placeholder="2. กฎหรือจุดสังเกตบนกราฟ" enterkeyhint="next">
+<input type="text" class="fLine" placeholder="3. จะใช้ตอน backtest ยังไง" enterkeyhint="next">
+</div>
+<label for="fQ">ยังไม่เข้าใจตรงไหน (ไม่บังคับ)</label>
+<input type="text" id="fQ" placeholder="จดไว้ไปหาคำตอบทีหลัง" enterkeyhint="done">
+<button class="btn block-btn" id="saveLog" disabled>บันทึกการเรียน</button>
+<p class="hint" id="logHint">สรุปให้ครบ 3 บรรทัด ถึงจะได้แท่งเขียว</p>
+</div>
+</div>
+<p class="sync" id="sync">กำลังโหลด…</p>
+</main>
+<main class="view" id="v-topics">
+<div class="block" style="margin-top:4px">
+<div class="panel">
+<div style="display:flex;justify-content:space-between;font-size:.88rem;color:var(--muted)"><span>ความคืบหน้า</span><span id="progText"></span></div>
+<div class="progress"><i id="progBar" style="width:0"></i></div>
+<ol class="topics" id="topics"></ol>
+<div class="add-topic">
+<input type="text" id="newTopic" placeholder="เพิ่มหัวข้อของคุณเอง" enterkeyhint="done">
+<button class="btn ghost small" id="addTopic">เพิ่ม</button>
+</div>
+</div>
+</div>
+</main>
+<main class="view" id="v-history">
+<div class="block" style="margin-top:4px">
+<div class="panel" id="history"></div>
+</div>
+</main>
+</div>
+<nav class="tabs" aria-label="เมนู">
+<div class="tabs-in" role="tablist">
+<button class="tab" role="tab" data-view="today" aria-selected="true">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 4v16M6 8h-1.5v7H6M6 8h1.5v7H6"/><path d="M12 6v12M12 9h-1.5v5H12M12 9h1.5v5H12"/><path d="M18 3v14M18 6h-1.5v8H18M18 6h1.5v8H18"/></svg>
+วันนี้
+</button>
+<button class="tab" role="tab" data-view="topics" aria-selected="false">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.2"/><circle cx="4.5" cy="12" r="1.2"/><circle cx="4.5" cy="18" r="1.2"/></svg>
+หัวข้อ
+</button>
+<button class="tab" role="tab" data-view="history" aria-selected="false">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
+ประวัติ
+</button>
+</div>
+</nav>
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(function(){
+const LS_KEY = "smc-tracker-v1";
+const DEFAULT_TOPICS = [
+"Market Structure พื้นฐาน (HH, HL, LH, LL)",
+"Swing Structure กับ Internal Structure",
+"BOS และ CHoCH",
+"Strong / Weak High-Low",
+"Liquidity (BSL, SSL, Equal High/Low)",
+"Inducement และ Liquidity Sweep",
+"Premium / Discount",
+"Order Block",
+"Fair Value Gap (FVG)",
+"Mitigation และ Breaker Block",
+"Multi-timeframe: HTF bias สู่ LTF entry",
+"Session และ Killzone (เอเชีย ลอนดอน นิวยอร์ก)",
+"Entry Model และ Risk Management"
+];
+const uid = () => Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4);
+const pad = n => String(n).padStart(2,"0");
+const dkey = d => d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const today = () => dkey(new Date());
+const thMonths = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+const thDays = ["อาทิตย์","จันทร์","อังคาร","พุธ","พฤหัสบดี","ศุกร์","เสาร์"];
+function fmtDate(k, withDay){
+const [y,m,d] = k.split("-").map(Number);
+const dt = new Date(y,m-1,d);
+return (withDay ? "วัน"+thDays[dt.getDay()]+" " : "") + d+" "+thMonths[m-1];
+}
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const isUrl = s => /^https?:\/\/\S+$/i.test((s||"").trim());
+const $ = id => document.getElementById(id);
+function parseLink(s){ const m = String(s||"").match(/https?:\/\/\S+/); const url = m ? m[0] : ""; const label = (url ? s.replace(url,"") : s).trim(); return {url, label: label || url}; }
+function linkHtml(s){ const {url,label} = parseLink(s); return url ? `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(label)}</a>` : `<span>${esc(label)}</span>`; }
+function freshState(){
+return { v:1, topics: DEFAULT_TOPICS.map(t => ({id:uid(), title:t, status:"todo", links:[], summary:""})), logs:[] };
+}
+function valid(s){ return s && Array.isArray(s.topics) && Array.isArray(s.logs); }
+let state;
+try { const raw = localStorage.getItem(LS_KEY); state = raw ? JSON.parse(raw) : null; } catch(e){ state = null; }
+if(!valid(state)) state = freshState();
+let ref = null, saveTimer = null;
+const syncEl = $("sync");
+const SYNC_OK = "บันทึกไว้ในบัญชีของคุณ เปิดจากเครื่องไหนก็เห็นข้อมูลเดียวกัน";
+function persist(){
+try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch(e){}
+if(!ref) return;
+clearTimeout(saveTimer);
+saveTimer = setTimeout(async () => {
+try { await ref.set(JSON.parse(JSON.stringify(state))); syncEl.textContent = SYNC_OK; }
+catch(e){ syncEl.textContent = "บันทึกขึ้นบัญชีไม่สำเร็จ ข้อมูลยังอยู่ในเครื่องนี้ ลองรีเฟรชหน้าอีกครั้ง"; }
+}, 600);
+}
+function toast(msg){
+const t = $("toast");
+t.textContent = msg; t.classList.add("show");
+clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), 2200);
+}
+function logsByDay(){
+const m = {};
+for(const l of state.logs){ (m[l.date] ||= []).push(l); }
+return m;
+}
+function streak(){
+const m = logsByDay(), d = new Date();
+if(!m[dkey(d)]) d.setDate(d.getDate()-1);
+let n = 0;
+while(m[dkey(d)]){ n++; d.setDate(d.getDate()-1); }
+return n;
+}
+function bestStreak(){
+const days = Object.keys(logsByDay()).sort();
+let best = 0, cur = 0, prev = null;
+for(const k of days){
+if(prev){ const [y,m,d] = prev.split("-").map(Number); cur = dkey(new Date(y,m-1,d+1)) === k ? cur+1 : 1; }
+else cur = 1;
+best = Math.max(best,cur); prev = k;
+}
+return best;
+}
+const statusText = {todo:"ยังไม่เริ่ม", learning:"กำลังเรียน", done:"จบแล้ว"};
+const lineCount = s => (s||"").split("\n").filter(x=>x.trim()).length;
+function sessionCount(id){ return state.logs.filter(l=>l.topicId===id).length; }
+function renderHero(){
+const s = streak();
+$("streak").className = "streak" + (s ? "" : " zero");
+$("streak").querySelector("b").textContent = s;
+const m = logsByDay();
+const N = 30, W = 360, base = 104, slot = W / N;
+const css = getComputedStyle(document.documentElement);
+const bull = css.getPropertyValue("--bull").trim(), miss = css.getPropertyValue("--miss").trim(), line = css.getPropertyValue("--line").trim(), gold = css.getPropertyValue("--gold").trim();
+let svg = `<line x1="0" y1="${base}" x2="${W}" y2="${base}" stroke="${line}" stroke-width="1"/>`;
+const start = new Date(); start.setDate(start.getDate() - (N-1));
+$("chartStart").textContent = fmtDate(dkey(start));
+for(let i=0;i<N;i++){
+const d = new Date(start); d.setDate(start.getDate()+i);
+const k = dkey(d), list = m[k] || [];
+const cx = slot*i + slot/2, bw = slot*0.56;
+if(list.length){
+const mins = list.reduce((a,l)=>a+(+l.minutes||0),0);
+const h = Math.min(82, 20 + (list.length-1)*14 + Math.min(mins,120)/120*28);
+const top = base - h;
+svg += `<line x1="${cx}" y1="${top-7}" x2="${cx}" y2="${base+5}" stroke="${bull}" stroke-width="1.2"/>`;
+svg += `<rect x="${cx-bw/2}" y="${top}" width="${bw}" height="${h}" rx="1.5" fill="${bull}"/>`;
+} else {
+svg += `<line x1="${cx}" y1="${base-6}" x2="${cx}" y2="${base+6}" stroke="${miss}" stroke-width="1.2"/>`;
+svg += `<rect x="${cx-bw/2}" y="${base-1.2}" width="${bw}" height="2.4" fill="${miss}"/>`;
+}
+if(i === N-1) svg += `<circle cx="${cx}" cy="${base+17}" r="2.6" fill="${gold}"/>`;
+}
+$("candles").innerHTML = svg;
+const done = state.topics.filter(t=>t.status==="done").length;
+const days30 = Object.keys(m).filter(k => k >= dkey(start)).length;
+const totalMin = state.logs.reduce((a,l)=>a+(+l.minutes||0),0);
+$("stats").innerHTML =
+`<div class="stat"><strong>${done}/${state.topics.length}</strong><span>หัวข้อที่จบแล้ว</span></div>`+
+`<div class="stat"><strong>${days30}</strong><span>วันที่เรียนใน 30 วัน</span></div>`+
+`<div class="stat"><strong>${bestStreak()}</strong><span>สถิติติดต่อกันสูงสุด</span></div>`+
+`<div class="stat"><strong>${(totalMin/60).toFixed(1)}</strong><span>ชั่วโมงเรียนรวม</span></div>`;
+}
+function renderToday(){
+const has = (logsByDay()[today()]||[]).length;
+const el = $("todayState");
+el.className = "today-state" + (has ? " done" : "");
+el.lastElementChild.textContent = has ? `วันนี้ได้แท่งเขียวแล้ว (${has} ครั้ง)` : "วันนี้ยังไม่ได้เรียน เป้าแค่ 1 คลิป";
+const sel = $("fTopic"), keep = sel.value;
+const next = state.topics.find(t=>t.status==="learning") || state.topics.find(t=>t.status!=="done") || state.topics[0];
+sel.innerHTML = state.topics.map((t,i)=>`<option value="${t.id}">${i+1}. ${esc(t.title)}${t.status==="done"?" (จบแล้ว)":""}</option>`).join("");
+sel.value = state.topics.some(t=>t.id===keep) ? keep : (next ? next.id : "");
+renderChips();
+}
+function renderChips(){
+const t = state.topics.find(x=>x.id===$("fTopic").value);
+const box = $("clipChips");
+if(!t || !t.links.length){ box.innerHTML = ""; return; }
+const watched = new Set(state.logs.filter(l=>l.topicId===t.id).map(l=>l.clip));
+const cur = $("fClip").value.trim();
+box.innerHTML = `<span style="font-size:.82rem;color:var(--muted)">แตะเพื่อเลือกคลิปของหัวข้อนี้</span>` + t.links.map((l,j)=>{
+const {url,label} = parseLink(l);
+return `<button type="button" class="chip${watched.has(l)?" watched":""}${cur===l?" on":""}" data-j="${j}"><span class="ck" aria-hidden="true"></span><span>${esc(label)}</span>${url?`<a class="open" href="${esc(url)}" target="_blank" rel="noopener">เปิดคลิป</a>`:""}</button>`;
+}).join("");
+}
+function renderTopics(){
+const done = state.topics.filter(t=>t.status==="done").length, n = state.topics.length;
+$("progText").textContent = `${done} จาก ${n} หัวข้อ`;
+$("progBar").style.width = (n ? done/n*100 : 0) + "%";
+$("topics").innerHTML = state.topics.map((t,i)=>{
+const c = sessionCount(t.id);
+return `<li class="topic is-${t.status}">
+<button class="topic-head" data-id="${t.id}">
+<span class="num">${i+1}</span>
+<span class="t-main"><span class="t-title">${esc(t.title)}</span><span class="t-meta">${statusText[t.status]}${t.links.length?` · ${t.links.length} คลิป`:""}${c?` · เรียนแล้ว ${c} ครั้ง`:""}</span></span>
+<span class="chev" aria-hidden="true">›</span>
+</button></li>`;
+}).join("");
+}
+function renderHistory(){
+const box = $("history");
+if(!state.logs.length){ box.innerHTML = `<p class="empty">ยังไม่มีบันทึก ไปที่แท็บวันนี้ ดูคลิปแรกแล้วสรุป 3 บรรทัด</p>`; return; }
+const m = logsByDay();
+const days = Object.keys(m).sort().reverse().slice(0,60);
+const title = id => (state.topics.find(t=>t.id===id)||{title:"หัวข้อที่ลบไปแล้ว"}).title;
+box.innerHTML = days.map(k=>`<div class="day"><h3>${fmtDate(k,true)}${k===today()?" (วันนี้)":""}</h3>${
+m[k].slice().reverse().map(l=>`<div class="entry">
+<div class="meta"><span>${esc(title(l.topicId))}${l.minutes?` · ${l.minutes} นาที`:""}</span><button class="x" data-del="${l.id}" aria-label="ลบบันทึกนี้">×</button></div>
+${l.clip?`<div style="font-size:.88rem">${linkHtml(l.clip)}</div>`:""}
+<ol>${l.lines.map(x=>`<li>${esc(x)}</li>`).join("")}</ol>
+${l.question?`<div class="q">ยังสงสัย: ${esc(l.question)}</div>`:""}
+</div>`).join("")}</div>`).join("");
+}
+let sheetId = null;
+function openSheet(id){ sheetId = id; renderSheet(); $("scrim").classList.add("show"); $("sheet").classList.add("show"); document.body.style.overflow="hidden"; }
+function closeSheet(){ sheetId = null; $("scrim").classList.remove("show"); $("sheet").classList.remove("show"); document.body.style.overflow=""; }
+function renderSheet(){
+const idx = state.topics.findIndex(t=>t.id===sheetId);
+if(idx<0){ closeSheet(); return; }
+const t = state.topics[idx], c = sessionCount(t.id), enough = lineCount(t.summary) >= 3;
+$("sheet").innerHTML = `
+<div class="grab"></div>
+<button class="x close" data-s="close" aria-label="ปิด">×</button>
+<h3 id="sheetTitle">${idx+1}. ${esc(t.title)}</h3>
+<div class="status">${statusText[t.status]}${c?` · เรียนแล้ว ${c} ครั้ง`:""}</div>
+<label>คลิปของหัวข้อนี้</label>
+<ul class="links">${t.links.map((l,j)=>`<li>${linkHtml(l)}<button class="x" data-s="rmlink" data-j="${j}" aria-label="ลบคลิป">×</button></li>`).join("") || `<li><span style="color:var(--muted)">ยังไม่มีคลิป</span></li>`}</ul>
+<div class="row" style="margin-top:8px"><input type="text" class="grow" id="linkIn" placeholder="วางลิงก์หรือชื่อคลิป" enterkeyhint="done"><button class="btn ghost small" data-s="addlink">เพิ่ม</button></div>
+<label for="sumIn">สรุปทั้งหัวข้อ (อย่างน้อย 3 บรรทัด ถึงจะกดจบได้)</label>
+<textarea id="sumIn" rows="5" placeholder="ถ้าต้องอธิบายหัวข้อนี้ให้เพื่อนฟัง จะพูดว่าอะไร">${esc(t.summary)}</textarea>
+${t.status==="done"
+? `<button class="btn ghost block-btn" data-s="reopen">เปิดกลับมาเรียนใหม่</button>`
+: `<button class="btn block-btn" data-s="finish" ${enough?"":"disabled"}>จบหัวข้อนี้</button>`}
+<div class="tools">
+<button class="btn ghost small" data-s="up" ${idx===0?"disabled":""}>เลื่อนขึ้น</button>
+<button class="btn ghost small" data-s="down" ${idx===state.topics.length-1?"disabled":""}>เลื่อนลง</button>
+<button class="btn ghost small" data-s="rename">เปลี่ยนชื่อ</button>
+<button class="btn ghost small" data-s="del" style="color:var(--danger)">ลบหัวข้อ</button>
+</div>`;
+}
+$("scrim").addEventListener("click", closeSheet);
+$("sheet").addEventListener("click", e=>{
+const b = e.target.closest("[data-s]"); if(!b) return;
+const idx = state.topics.findIndex(t=>t.id===sheetId), t = state.topics[idx];
+const act = b.dataset.s;
+if(act==="close"){ closeSheet(); return; }
+if(act==="addlink"){ const v = $("linkIn").value.trim(); if(!v) return; t.links.push(v); if(t.status==="todo") t.status="learning"; }
+if(act==="rmlink"){ t.links.splice(+b.dataset.j,1); }
+if(act==="finish"){ t.summary = $("sumIn").value; if(lineCount(t.summary)<3) return; t.status="done"; persist(); renderAll(); closeSheet(); toast("จบหัวข้อแล้ว ไปต่อหัวข้อถัดไปได้เลย"); return; }
+if(act==="reopen"){ t.status="learning"; }
+if(act==="up" && idx>0){ [state.topics[idx-1],state.topics[idx]]=[state.topics[idx],state.topics[idx-1]]; }
+if(act==="down" && idx<state.topics.length-1){ [state.topics[idx+1],state.topics[idx]]=[state.topics[idx],state.topics[idx+1]]; }
+if(act==="rename"){ const v = prompt("ชื่อหัวข้อใหม่", t.title); if(!v||!v.trim()) return; t.title=v.trim(); }
+if(act==="del"){ if(!confirm(`ลบหัวข้อ "${t.title}"? บันทึกการเรียนเดิมยังอยู่`)) return; state.topics.splice(idx,1); persist(); renderAll(); closeSheet(); toast("ลบหัวข้อแล้ว"); return; }
+persist(); renderAll(); renderSheet();
+});
+let sumTimer;
+$("sheet").addEventListener("input", e=>{
+if(e.target.id!=="sumIn") return;
+const t = state.topics.find(x=>x.id===sheetId); if(!t) return;
+t.summary = e.target.value;
+const fin = $("sheet").querySelector('[data-s="finish"]'); if(fin) fin.disabled = lineCount(t.summary)<3;
+clearTimeout(sumTimer); sumTimer = setTimeout(persist, 700);
+});
+$("sheet").addEventListener("keydown", e=>{
+if(e.key==="Enter" && e.target.id==="linkIn"){ e.preventDefault(); $("sheet").querySelector('[data-s="addlink"]').click(); }
+});
+document.addEventListener("keydown", e=>{ if(e.key==="Escape" && sheetId) closeSheet(); });
+function renderAll(){ renderHero(); renderToday(); renderTopics(); renderHistory(); }
+document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>{
+document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected", x===b));
+document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active", v.id==="v-"+b.dataset.view));
+window.scrollTo(0,0);
+}));
+$("fTopic").addEventListener("change", renderChips);
+$("clipChips").addEventListener("click", e=>{
+if(e.target.closest("a")) return;
+const b = e.target.closest(".chip"); if(!b) return;
+const t = state.topics.find(x=>x.id===$("fTopic").value); if(!t) return;
+$("fClip").value = t.links[+b.dataset.j]; renderChips();
+});
+const lines = [...document.querySelectorAll(".fLine")];
+const saveBtn = $("saveLog");
+function checkForm(){
+const ok = lines.every(i=>i.value.trim());
+saveBtn.disabled = !ok;
+$("logHint").textContent = ok ? "พร้อมบันทึก" : "สรุปให้ครบ 3 บรรทัด ถึงจะได้แท่งเขียว";
+}
+lines.forEach((i,n)=>{
+i.addEventListener("input",checkForm);
+i.addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); (lines[n+1]||$("fQ")).focus(); } });
+});
+$("fQ").addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); e.target.blur(); } });
+saveBtn.addEventListener("click",()=>{
+const topicId = $("fTopic").value, clip = $("fClip").value.trim();
+const minutes = Math.max(0, parseInt($("fMin").value,10)||0);
+state.logs.push({ id:uid(), date:today(), topicId, clip, minutes, lines: lines.map(i=>i.value.trim()), question: $("fQ").value.trim(), at: Date.now() });
+const t = state.topics.find(x=>x.id===topicId);
+if(t){ if(t.status==="todo") t.status="learning"; if(clip && !t.links.includes(clip)) t.links.push(clip); }
+const first = (logsByDay()[today()]||[]).length === 1;
+lines.forEach(i=>i.value=""); ["fClip","fMin","fQ"].forEach(id=>$(id).value="");
+document.activeElement && document.activeElement.blur();
+checkForm(); persist(); renderAll();
+window.scrollTo({top:0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
+toast(first ? `ได้แท่งเขียววันนี้แล้ว ติดต่อกัน ${streak()} วัน` : "บันทึกแล้ว");
+});
+$("history").addEventListener("click",e=>{
+const id = e.target.closest("[data-del]")?.dataset.del; if(!id) return;
+if(!confirm("ลบบันทึกนี้?")) return;
+state.logs = state.logs.filter(l=>l.id!==id);
+persist(); renderAll(); toast("ลบบันทึกแล้ว");
+});
+$("topics").addEventListener("click",e=>{ const b = e.target.closest("[data-id]"); if(b) openSheet(b.dataset.id); });
+function addTopic(){
+const inp = $("newTopic"), v = inp.value.trim(); if(!v) return;
+state.topics.push({id:uid(), title:v, status:"todo", links:[], summary:""});
+inp.value=""; inp.blur(); persist(); renderAll(); toast("เพิ่มหัวข้อแล้ว");
+}
+$("addTopic").addEventListener("click",addTopic);
+$("newTopic").addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); addTopic(); } });
+window.matchMedia?.("(prefers-color-scheme: dark)").addEventListener?.("change",renderHero);
+new MutationObserver(renderHero).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+renderAll();
+syncEl.textContent = "ข้อมูลบันทึกไว้ในเครื่องนี้";
+(async ()=>{
+try{
+if(!window.claude || typeof window.claude.use !== "function") return;
+const [db, user] = await Promise.all([window.claude.use("db"), window.claude.use("user")]);
+if(!db || !user) return;
+const id = await user.id(); if(!id) return;
+ref = db.collection("data/users/"+id).doc("tracker");
+const snap = await ref.get();
+if(snap.exists && valid(snap.data())){
+state = JSON.parse(JSON.stringify(snap.data()));
+try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch(e){}
+renderAll(); if(sheetId) renderSheet();
+} else {
+await ref.set(JSON.parse(JSON.stringify(state)));
+}
+syncEl.textContent = SYNC_OK;
+}catch(e){ ref = null; syncEl.textContent = "ข้อมูลบันทึกไว้ในเครื่องนี้"; }
+})();
+})();
+</script>
+</body>
+</html>

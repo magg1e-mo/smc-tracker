@@ -2,8 +2,9 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="SMC Tracker">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -16,11 +17,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-box-sizing:border-box;
-padding-bottom:env(safe-area-inset-bottom,0px);
 --bg:#EEF1EC; --panel:#FAFBF8; --ink:#1B2430; --muted:#5E6B78; --line:#D3D9D2;
 --bull:#1F8A70; --bull-soft:#D6ECE4; --miss:#B9C1C8; --gold:#A87A12; --gold-soft:#F3E7C6; --danger:#B4452F;
---bar:rgba(250,251,248,.92); --scrim:rgba(20,26,33,.38);
+--bar:rgba(250,251,248,.94); --scrim:rgba(20,26,33,.38);
 --display:"Kanit",system-ui,sans-serif;
 --body:"Kanit","Noto Sans Thai",-apple-system,system-ui,sans-serif;
 --tabh:62px;
@@ -29,30 +28,34 @@ padding-bottom:env(safe-area-inset-bottom,0px);
 :root:not([data-theme="light"]){
 --bg:#141A21; --panel:#1C242D; --ink:#E6EBEF; --muted:#9AA7B3; --line:#2E3A46;
 --bull:#3DBE96; --bull-soft:#173A31; --miss:#3C4955; --gold:#E0B44C; --gold-soft:#3A3120; --danger:#E07A63;
---bar:rgba(28,36,45,.92); --scrim:rgba(0,0,0,.55);
+--bar:rgba(28,36,45,.94); --scrim:rgba(0,0,0,.55);
 }
 }
 :root[data-theme="dark"]{
 --bg:#141A21; --panel:#1C242D; --ink:#E6EBEF; --muted:#9AA7B3; --line:#2E3A46;
 --bull:#3DBE96; --bull-soft:#173A31; --miss:#3C4955; --gold:#E0B44C; --gold-soft:#3A3120; --danger:#E07A63;
---bar:rgba(28,36,45,.92); --scrim:rgba(0,0,0,.55);
+--bar:rgba(28,36,45,.94); --scrim:rgba(0,0,0,.55);
 }
-*,*::before,*::after{box-sizing:inherit}
-html{scroll-padding-top:calc(72px + env(safe-area-inset-top,0px));-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-weight:300;font-size:16px;line-height:1.55;-webkit-tap-highlight-color:transparent}
+*,*::before,*::after{box-sizing:border-box;scrollbar-width:none;-webkit-tap-highlight-color:transparent}
+*::-webkit-scrollbar{display:none;width:0;height:0}
+html,body{height:100%;margin:0;overflow:hidden;overscroll-behavior:none;background:var(--bg)}
+html{-webkit-text-size-adjust:100%;touch-action:pan-x pan-y}
+body{color:var(--ink);font-family:var(--body);font-weight:300;font-size:16px;line-height:1.55;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input,textarea{-webkit-user-select:text;user-select:text}
 h1,h2,h3{font-family:var(--display);line-height:1.2;margin:0}
-button,input,textarea,select{font:inherit;color:inherit;font-size:16px}
+button,input,textarea{font:inherit;color:inherit;font-size:16px}
 button{cursor:pointer;touch-action:manipulation}
 :focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 svg{max-width:100%}
-.app{max-width:430px;margin:0 auto;min-height:100%;position:relative;padding-top:calc(66px + env(safe-area-inset-top,0px));padding-bottom:calc(var(--tabh) + 24px)}
-.top{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;z-index:15;background:var(--bg);padding:calc(12px + env(safe-area-inset-top,0px)) 18px 10px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.app{position:fixed;top:0;bottom:0;left:0;right:0;margin:0 auto;max-width:430px;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+@media (min-width:431px){.app{border-left:1px solid var(--line);border-right:1px solid var(--line)}}
+.top{flex:none;background:var(--bg);padding:calc(12px + env(safe-area-inset-top,0px)) 18px 10px;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .top h1{font-size:1.45rem;font-weight:700}
-.top .sub{color:var(--muted);font-size:.82rem}
 .streak{display:flex;align-items:baseline;gap:6px}
 .streak b{font-family:var(--display);font-size:2.1rem;line-height:1;color:var(--bull);font-weight:700}
 .streak span{color:var(--muted);font-size:.8rem;line-height:1.2;white-space:nowrap}
 .streak.zero b{color:var(--miss)}
+.scroll{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-bottom:24px}
 .view{display:none;padding:0 14px}
 .view.active{display:block}
 .block{margin-top:16px}
@@ -69,12 +72,13 @@ svg{max-width:100%}
 .today-state{display:flex;align-items:center;gap:10px;margin-bottom:6px;font-size:.92rem}
 .dot{width:10px;height:10px;border-radius:50%;background:var(--miss);flex:none}
 .done .dot{background:var(--bull)}
-label{display:block;font-size:.85rem;color:var(--muted);margin:14px 0 6px}
-input[type=text],input[type=number],textarea,select{
+label,.lbl{display:block;font-size:.85rem;color:var(--muted);margin:14px 0 6px}
+input[type=text],input[type=number],textarea{
 width:100%;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:11px 12px;min-height:46px;-webkit-appearance:none;appearance:none
 }
-select{background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:34px}
-textarea{resize:vertical;min-height:96px}
+textarea{resize:none;min-height:110px}
+.picker{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-height:48px;border:1px solid var(--line);border-radius:12px;background:var(--bg);padding:8px 12px;text-align:left}
+.picker svg{flex:none;color:var(--muted)}
 .lines input{margin-bottom:8px}
 .row{display:flex;gap:10px}
 .row>.grow{flex:1;min-width:0}
@@ -83,6 +87,7 @@ textarea{resize:vertical;min-height:96px}
 .btn:disabled{opacity:.45;cursor:not-allowed}
 .btn.block-btn{width:100%;margin-top:16px}
 .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.danger{background:var(--danger)}
 .btn.small{min-height:44px;font-size:.92rem;padding:0 14px}
 .hint{color:var(--muted);font-size:.82rem;margin-top:8px;text-align:center}
 .chips{display:flex;flex-direction:column;gap:6px;margin-top:8px}
@@ -94,10 +99,14 @@ textarea{resize:vertical;min-height:96px}
 .chip .open{margin-left:auto;color:var(--bull);font-size:.82rem;flex:none}
 .progress{height:6px;border-radius:99px;background:var(--line);overflow:hidden;margin:2px 0 14px}
 .progress i{display:block;height:100%;background:var(--bull);border-radius:99px}
-ol.topics{list-style:none;padding:0;margin:0}
+ol.topics,.pick-list{list-style:none;padding:0;margin:0}
 .topic{border-top:1px solid var(--line)}
 .topic:first-child{border-top:0}
-.topic-head{display:flex;align-items:center;gap:12px;width:100%;background:none;border:0;padding:12px 2px;min-height:58px;text-align:left}
+.topic-head,.pick-row{display:flex;align-items:center;gap:12px;width:100%;background:none;border:0;padding:12px 2px;min-height:58px;text-align:left}
+.pick-list{margin-top:8px}
+.pick-list li+li .pick-row{border-top:1px solid var(--line)}
+.pick-row.on .t-title{color:var(--bull);font-weight:600}
+.pick-row svg{flex:none;color:var(--bull)}
 .num{font-family:var(--display);font-weight:600;width:2ch;color:var(--muted);flex:none;text-align:right}
 .is-done .num{color:var(--bull)}
 .is-learning .num{color:var(--gold)}
@@ -121,16 +130,16 @@ ol.topics{list-style:none;padding:0;margin:0}
 .x{background:none;border:0;color:var(--muted);min-width:44px;min-height:44px;font-size:1.25rem;margin-right:-10px}
 .empty{color:var(--muted);text-align:center;padding:22px 6px}
 .sync{font-size:.78rem;color:var(--muted);margin:22px 8px 0;text-align:center}
-.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--bar);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
-.tabs-in{max-width:430px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);height:var(--tabh)}
+.tabs{flex:none;background:var(--bar);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tabs-in{display:grid;grid-template-columns:repeat(3,1fr);height:var(--tabh)}
 .tab{background:none;border:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--muted);font-size:.75rem}
 .tab svg{width:24px;height:24px}
 .tab[aria-selected="true"]{color:var(--bull);font-weight:600}
-.scrim{position:fixed;inset:0;background:var(--scrim);z-index:30;opacity:0;pointer-events:none;transition:opacity .2s}
+.scrim{position:absolute;inset:0;background:var(--scrim);z-index:30;opacity:0;pointer-events:none;transition:opacity .2s}
 .scrim.show{opacity:1;pointer-events:auto}
-.sheet{position:fixed;left:0;right:0;bottom:0;z-index:31;max-width:430px;margin:0 auto;background:var(--panel);border-radius:22px 22px 0 0;max-height:88%;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
-padding:8px 18px calc(22px + env(safe-area-inset-bottom,0px));transform:translateY(105%);transition:transform .26s ease}
-.sheet.show{transform:translateY(0)}
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:31;background:var(--panel);border-radius:22px 22px 0 0;max-height:88%;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+padding:8px 18px calc(22px + env(safe-area-inset-bottom,0px));transform:translateY(105%);transition:transform .26s ease;visibility:hidden}
+.sheet.show{transform:translateY(0);visibility:visible}
 .grab{width:38px;height:5px;border-radius:99px;background:var(--line);margin:4px auto 12px}
 .sheet h3{font-size:1.15rem;font-weight:600;padding-right:44px}
 .sheet .close{position:absolute;top:10px;right:10px}
@@ -141,24 +150,24 @@ padding:8px 18px calc(22px + env(safe-area-inset-bottom,0px));transform:translat
 .links a,.links span{flex:1;min-width:0;word-break:break-all;padding:8px 0}
 .links a{color:var(--bull)}
 .tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px}
-.toast{position:fixed;left:50%;bottom:calc(var(--tabh) + 16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(16px);z-index:40;
+.dlg-wrap{position:absolute;inset:0;z-index:50;display:none;align-items:center;justify-content:center;background:var(--scrim);padding:24px}
+.dlg-wrap.show{display:flex}
+.dlg{background:var(--panel);border-radius:18px;padding:20px;width:100%;max-width:320px}
+.dlg p{margin:0 0 16px}
+.dlg-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.toast{position:absolute;left:50%;bottom:calc(var(--tabh) + 16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(16px);z-index:40;
 background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;opacity:0;transition:.25s;pointer-events:none;font-size:.92rem;width:max-content;max-width:calc(100% - 32px);text-align:center}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-@media (min-width:600px){
-body{padding:24px 0}
-.app{border:1px solid var(--line);border-radius:28px;background:var(--bg);overflow:hidden}
-}
 @media (prefers-reduced-motion: reduce){.toast,.sheet,.scrim{transition:none}}
 </style>
 </head>
 <body>
-<div class="app">
+<div class="app" id="app">
 <header class="top">
-<div>
 <h1>ตั้งใจหน่อยแม็กกี้ !</h1>
-</div>
 <div class="streak" id="streak"><b>0</b><span>วัน<br>ติดต่อกัน</span></div>
 </header>
+<div class="scroll" id="scroll">
 <main class="view active" id="v-today">
 <div class="panel chart">
 <svg id="candles" viewBox="0 0 360 130" role="img" aria-label="กราฟการเรียน 30 วันล่าสุด"></svg>
@@ -170,24 +179,27 @@ body{padding:24px 0}
 <h2>บันทึกวันนี้</h2>
 <div class="panel">
 <div class="today-state" id="todayState"><span class="dot"></span><span></span></div>
-<label for="fTopic">หัวข้อ</label>
-<select id="fTopic"></select>
+<div class="lbl" id="topicLbl">หัวข้อ</div>
+<button type="button" class="picker" id="topicBtn" aria-labelledby="topicLbl topicBtnText" aria-haspopup="dialog">
+<span id="topicBtnText"></span>
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+</button>
+<div class="chips" id="clipChips"></div>
 <div class="row">
 <div class="grow">
 <label for="fClip">คลิปที่ดู</label>
-<input type="text" id="fClip" placeholder="เลือกด้านล่าง หรือพิมพ์เอง" autocomplete="off">
+<input type="text" id="fClip" placeholder="เลือกด้านบน หรือพิมพ์เอง" autocomplete="off">
 </div>
 <div class="narrow">
 <label for="fMin">นาที</label>
 <input type="number" id="fMin" min="0" inputmode="numeric" placeholder="30">
 </div>
 </div>
-<div class="chips" id="clipChips"></div>
 <label>สรุปด้วยคำของตัวเอง 3 บรรทัด</label>
 <div class="lines">
-<input type="text" class="fLine" placeholder="1. คลิปนี้สอนอะไร" enterkeyhint="next">
-<input type="text" class="fLine" placeholder="2. กฎหรือจุดสังเกตบนกราฟ" enterkeyhint="next">
-<input type="text" class="fLine" placeholder="3. จะใช้ตอน backtest ยังไง" enterkeyhint="next">
+<input type="text" class="fLine" placeholder="1. คลิปนี้สอนอะไร" enterkeyhint="next" aria-label="สรุปบรรทัดที่ 1">
+<input type="text" class="fLine" placeholder="2. กฎหรือจุดสังเกตบนกราฟ" enterkeyhint="next" aria-label="สรุปบรรทัดที่ 2">
+<input type="text" class="fLine" placeholder="3. จะใช้ตอน backtest ยังไง" enterkeyhint="next" aria-label="สรุปบรรทัดที่ 3">
 </div>
 <label for="fQ">ยังไม่เข้าใจตรงไหน (ไม่บังคับ)</label>
 <input type="text" id="fQ" placeholder="จดไว้ไปหาคำตอบทีหลัง" enterkeyhint="done">
@@ -204,7 +216,7 @@ body{padding:24px 0}
 <div class="progress"><i id="progBar" style="width:0"></i></div>
 <ol class="topics" id="topics"></ol>
 <div class="add-topic">
-<input type="text" id="newTopic" placeholder="เพิ่มหัวข้อของคุณเอง" enterkeyhint="done">
+<input type="text" id="newTopic" placeholder="เพิ่มหัวข้อของคุณเอง" enterkeyhint="done" aria-label="เพิ่มหัวข้อ">
 <button class="btn ghost small" id="addTopic">เพิ่ม</button>
 </div>
 </div>
@@ -233,28 +245,17 @@ body{padding:24px 0}
 </div>
 </nav>
 <div class="scrim" id="scrim"></div>
-<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true"></div>
+<div class="dlg-wrap" id="dlg"></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</div>
 <script>
 (function(){
 const LS_KEY = "smc-tracker-v1";
-const DEFAULT_TOPICS = [
-"Market Structure พื้นฐาน (HH, HL, LH, LL)",
-"Swing Structure กับ Internal Structure",
-"BOS และ CHoCH",
-"Strong / Weak High-Low",
-"Liquidity (BSL, SSL, Equal High/Low)",
-"Inducement และ Liquidity Sweep",
-"Premium / Discount",
-"Order Block",
-"Fair Value Gap (FVG)",
-"Mitigation และ Breaker Block",
-"Multi-timeframe: HTF bias สู่ LTF entry",
-"Session และ Killzone (เอเชีย ลอนดอน นิวยอร์ก)",
-"Entry Model และ Risk Management",
-"ดูตัวอย่างเทรดจริง: Trade Breakdown ทองคำ"
-];
-const SEED_LINKS = [["EP.01 Bullish Trend (15:54) https://youtu.be/QFzrW-CYs9o","EP.02 Bearish Trend (13:47) https://youtu.be/ntFPB44EPdM","เปิดกราฟมาควรเริ่มหาโครงสร้างจากตรงไหนดี (29:54) https://youtu.be/EI17HjyeIos"],["Market Structure & Inducement 2024 (45:21) https://youtu.be/h_Vwpf1OYUI","Q&A EP.01 ถ้าเจอ Swing กว้าง เข้าออเดอร์ยังไง (44:02) https://youtu.be/3UOQ7zdAPZg"],["EP.03 BOS + CHoCH (13:57) https://youtu.be/r1pur3CQ0Eo","แกะวิธีคิดรายใหญ่: CHoCH จริงหรือหลอกใน LTF (2:35:46, เสริม) https://youtu.be/lCbO1mJrSFg"],[],["Liquidity EP.01 สภาพคล่องคืออะไร (21:34) https://youtu.be/dnhipnkbPbI","Liquidity EP.02 มองสภาพคล่องออก ลดโอกาสโดนกิน (20:50) https://youtu.be/W2piNWDCW0U"],["Inducement หรือ CHoCH ดูยังไงไม่ให้สับสน (39:00) https://youtu.be/__n_Q9OAWR4","3 Step Trade Liquidity Sweep https://youtu.be/YLMAu6sM7ds","Sweep Liquidity Entry Model https://youtu.be/34tivUiaf1w"],["Fibonacci Retracement ใช้ยังไงให้ได้ผล (26:53) https://youtu.be/YVBClvqupec"],["Bullish Order Block (12:36) https://youtu.be/o-Kgkd-9VWg","Bearish Order Block (10:07) https://youtu.be/gfK8kvws504","ทำไมบางกราฟมาไม่ถึงโซน Order Block (15:04) https://youtu.be/MnBGtTO_bII","Order Block Inside Bar (21:51) https://youtu.be/QWJey-tE3yg"],[],["Breaker Block (18:39) https://youtu.be/C0cdj9TJx6I","Hidden Base Zone (19:35) https://youtu.be/n7skwQ8XPV8"],["5 Step High Time Frame (22:34) https://youtu.be/WKUkA4UqROM","4 Step Low Time Frame (14:25) https://youtu.be/t5jEINcfCsM","Multi-Timeframe Confirmation 2 Timeframe (21:49) https://youtu.be/WSQmt6iXcqs"],["Liquidity Asia Session (ชอบเทรดทองห้ามมองข้าม) https://youtu.be/ZQur1BtiKjM","New York Session คอนเฟิร์ม M1 เวลาไหนปลอดภัย https://youtu.be/QL76JbJOGoY"],["Aggressive Entry vs Confirmation Entry (15:44) https://youtu.be/Qy3e16gN5gg","ตกรถจังหวะแรก ควรเข้าที่ไหนดี (31:09) https://youtu.be/iDLgHiV9gJE","วิธีแก้ไม้ใน Low Time Frame (22:41) https://youtu.be/iy3g9ZEeNTU","เทรด SMC ยังไงไม่ให้แพ้บ่อย (30:32) https://youtu.be/SHq5ENt18xA","Indicator คำนวณ Lot (8:49) https://youtu.be/0fMn-n7wFEA"],["EP.04 BUY XAUUSD +8.3RR https://youtu.be/USjIWm-jnN4","EP.08 SELL XAUUSD +12RR https://youtu.be/mImFdmk0p1I","EP.09 SELL XAUUSD สวนโครงสร้าง +11RR https://youtu.be/B5_9D6a8fCY","EP.11 BUY XAUUSD +12RR https://youtu.be/2cuYMkUs3FY","EP.14 SELL XAUUSD +42RR https://youtu.be/z3v_rZf0YOA"]];
+const STATE_V = 2;
+const SEED = [["Market Structure พื้นฐาน (HH, HL, LH, LL)",["EP.01 Bullish Trend (15:54) https://youtu.be/QFzrW-CYs9o","EP.02 Bearish Trend (13:47) https://youtu.be/ntFPB44EPdM","เปิดกราฟมาควรเริ่มหาโครงสร้างจากตรงไหนดี (29:54) https://youtu.be/EI17HjyeIos"]],["BOS และ CHoCH",["EP.03 BOS + CHoCH (13:57) https://youtu.be/r1pur3CQ0Eo","แกะวิธีคิดรายใหญ่: CHoCH จริงหรือหลอกใน LTF (2:35:46, เสริม) https://youtu.be/lCbO1mJrSFg"]],["Order Block",["Bullish Order Block (12:36) https://youtu.be/o-Kgkd-9VWg","Bearish Order Block (10:07) https://youtu.be/gfK8kvws504","ทำไมบางกราฟมาไม่ถึงโซน Order Block (15:04) https://youtu.be/MnBGtTO_bII","Order Block Inside Bar (21:51) https://youtu.be/QWJey-tE3yg"]],["Premium / Discount",["Fibonacci Retracement ใช้ยังไงให้ได้ผล (26:53) https://youtu.be/YVBClvqupec"]],["Entry Model และ Risk Management",["Aggressive Entry vs Confirmation Entry (15:44) https://youtu.be/Qy3e16gN5gg","ตกรถจังหวะแรก ควรเข้าที่ไหนดี (31:09) https://youtu.be/iDLgHiV9gJE","วิธีแก้ไม้ใน Low Time Frame (22:41) https://youtu.be/iy3g9ZEeNTU","เทรด SMC ยังไงไม่ให้แพ้บ่อย (30:32) https://youtu.be/SHq5ENt18xA","Indicator คำนวณ Lot (8:49) https://youtu.be/0fMn-n7wFEA"]],["Mitigation และ Breaker Block",["Hidden Base Zone (19:35) https://youtu.be/n7skwQ8XPV8","Breaker Block (18:39) https://youtu.be/C0cdj9TJx6I"]],["Swing Structure กับ Internal Structure",["Q&A EP.01 ถ้าเจอ Swing กว้าง เข้าออเดอร์ยังไง (44:02) https://youtu.be/3UOQ7zdAPZg","Market Structure & Inducement 2024 (45:21) https://youtu.be/h_Vwpf1OYUI"]],["Inducement และ Liquidity Sweep",["Inducement หรือ CHoCH ดูยังไงไม่ให้สับสน (39:00) https://youtu.be/__n_Q9OAWR4","3 Step Trade Liquidity Sweep https://youtu.be/YLMAu6sM7ds","Sweep Liquidity Entry Model https://youtu.be/34tivUiaf1w"]],["Multi-timeframe: HTF bias สู่ LTF entry",["5 Step High Time Frame (22:34) https://youtu.be/WKUkA4UqROM","4 Step Low Time Frame (14:25) https://youtu.be/t5jEINcfCsM","Multi-Timeframe Confirmation 2 Timeframe (21:49) https://youtu.be/WSQmt6iXcqs"]],["Liquidity (BSL, SSL, Equal High/Low)",["Liquidity EP.01 สภาพคล่องคืออะไร (21:34) https://youtu.be/dnhipnkbPbI","Liquidity EP.02 มองสภาพคล่องออก ลดโอกาสโดนกิน (20:50) https://youtu.be/W2piNWDCW0U"]],["Session และ Killzone (เอเชีย ลอนดอน นิวยอร์ก)",["New York Session คอนเฟิร์ม M1 เวลาไหนปลอดภัย https://youtu.be/QL76JbJOGoY","Liquidity Asia Session (ชอบเทรดทองห้ามมองข้าม) https://youtu.be/ZQur1BtiKjM"]],["ดูตัวอย่างเทรดจริง: Trade Breakdown ทองคำ",["EP.04 BUY XAUUSD +8.3RR https://youtu.be/USjIWm-jnN4","EP.08 SELL XAUUSD +12RR https://youtu.be/mImFdmk0p1I","EP.09 SELL XAUUSD สวนโครงสร้าง +11RR https://youtu.be/B5_9D6a8fCY","EP.11 BUY XAUUSD +12RR https://youtu.be/2cuYMkUs3FY","EP.14 SELL XAUUSD +42RR https://youtu.be/z3v_rZf0YOA"]]];
+const DROPPED = ["Strong / Weak High-Low","Fair Value Gap (FVG)"];
+const CHECK = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 const uid = () => Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4);
 const pad = n => String(n).padStart(2,"0");
 const dkey = d => d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
@@ -267,17 +268,35 @@ const dt = new Date(y,m-1,d);
 return (withDay ? "วัน"+thDays[dt.getDay()]+" " : "") + d+" "+thMonths[m-1];
 }
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const isUrl = s => /^https?:\/\/\S+$/i.test((s||"").trim());
 const $ = id => document.getElementById(id);
 function parseLink(s){ const m = String(s||"").match(/https?:\/\/\S+/); const url = m ? m[0] : ""; const label = (url ? s.replace(url,"") : s).trim(); return {url, label: label || url}; }
 function linkHtml(s){ const {url,label} = parseLink(s); return url ? `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(label)}</a>` : `<span>${esc(label)}</span>`; }
 function freshState(){
-return { v:1, topics: DEFAULT_TOPICS.map((t,i) => ({id:uid(), title:t, status:"todo", links:(SEED_LINKS[i]||[]).slice(), summary:""})), logs:[] };
+return { v:STATE_V, topics: SEED.map(s => ({id:uid(), title:s[0], status:"todo", links:s[1].slice(), summary:""})), logs:[] };
 }
 function valid(s){ return s && Array.isArray(s.topics) && Array.isArray(s.logs); }
+function migrate(s){
+if(!valid(s)) return {s:freshState(), changed:true};
+if((s.v||1) >= STATE_V) return {s, changed:false};
+const used = new Set(s.logs.map(l=>l.topicId));
+const byTitle = new Map(s.topics.map(t=>[t.title,t]));
+const out = [], taken = new Set();
+for(const [title,links] of SEED){
+const t = byTitle.get(title);
+if(t){ if(!t.links.length) t.links = links.slice(); taken.add(t.id); out.push(t); }
+else out.push({id:uid(), title, status:"todo", links:links.slice(), summary:""});
+}
+for(const t of s.topics){
+if(taken.has(t.id)) continue;
+if(DROPPED.includes(t.title) && t.status==="todo" && !used.has(t.id) && !t.summary && !t.links.length) continue;
+out.push(t);
+}
+s.topics = out; s.v = STATE_V;
+return {s, changed:true};
+}
 let state;
-try { const raw = localStorage.getItem(LS_KEY); state = raw ? JSON.parse(raw) : null; } catch(e){ state = null; }
-if(!valid(state)) state = freshState();
+try { state = JSON.parse(localStorage.getItem(LS_KEY)); } catch(e){ state = null; }
+const mig = migrate(state); state = mig.s;
 let ref = null, saveTimer = null;
 const syncEl = $("sync");
 const SYNC_OK = "บันทึกไว้ในบัญชีของคุณ เปิดจากเครื่องไหนก็เห็นข้อมูลเดียวกัน";
@@ -320,6 +339,12 @@ return best;
 const statusText = {todo:"ยังไม่เริ่ม", learning:"กำลังเรียน", done:"จบแล้ว"};
 const lineCount = s => (s||"").split("\n").filter(x=>x.trim()).length;
 function sessionCount(id){ return state.logs.filter(l=>l.topicId===id).length; }
+let formTopic = null;
+function curTopicId(){
+if(formTopic && state.topics.some(t=>t.id===formTopic)) return formTopic;
+const n = state.topics.find(t=>t.status==="learning") || state.topics.find(t=>t.status!=="done") || state.topics[0];
+return n ? n.id : "";
+}
 function renderHero(){
 const s = streak();
 $("streak").className = "streak" + (s ? "" : " zero");
@@ -362,14 +387,12 @@ const has = (logsByDay()[today()]||[]).length;
 const el = $("todayState");
 el.className = "today-state" + (has ? " done" : "");
 el.lastElementChild.textContent = has ? `วันนี้ได้แท่งเขียวแล้ว (${has} ครั้ง)` : "วันนี้ยังไม่ได้เรียน เป้าแค่ 1 คลิป";
-const sel = $("fTopic"), keep = sel.value;
-const next = state.topics.find(t=>t.status==="learning") || state.topics.find(t=>t.status!=="done") || state.topics[0];
-sel.innerHTML = state.topics.map((t,i)=>`<option value="${t.id}">${i+1}. ${esc(t.title)}${t.status==="done"?" (จบแล้ว)":""}</option>`).join("");
-sel.value = state.topics.some(t=>t.id===keep) ? keep : (next ? next.id : "");
+const id = curTopicId(), t = state.topics.find(x=>x.id===id);
+$("topicBtnText").textContent = t ? (state.topics.indexOf(t)+1) + ". " + t.title : "เลือกหัวข้อ";
 renderChips();
 }
 function renderChips(){
-const t = state.topics.find(x=>x.id===$("fTopic").value);
+const t = state.topics.find(x=>x.id===curTopicId());
 const box = $("clipChips");
 if(!t || !t.links.length){ box.innerHTML = ""; return; }
 const watched = new Set(state.logs.filter(l=>l.topicId===t.id).map(l=>l.clip));
@@ -407,21 +430,58 @@ ${l.clip?`<div style="font-size:.88rem">${linkHtml(l.clip)}</div>`:""}
 ${l.question?`<div class="q">ยังสงสัย: ${esc(l.question)}</div>`:""}
 </div>`).join("")}</div>`).join("");
 }
-let sheetId = null;
-function openSheet(id){ sheetId = id; renderSheet(); $("scrim").classList.add("show"); $("sheet").classList.add("show"); document.body.style.overflow="hidden"; }
-function closeSheet(){ sheetId = null; $("scrim").classList.remove("show"); $("sheet").classList.remove("show"); document.body.style.overflow=""; }
-function renderSheet(){
-const idx = state.topics.findIndex(t=>t.id===sheetId);
-if(idx<0){ closeSheet(); return; }
-const t = state.topics[idx], c = sessionCount(t.id), enough = lineCount(t.summary) >= 3;
+let dlgOk = null;
+function ask(msg, okLabel, fn){
+dlgOk = fn;
+$("dlg").innerHTML = `<div class="dlg" role="alertdialog" aria-modal="true" aria-label="${esc(msg)}"><p>${esc(msg)}</p><div class="dlg-btns"><button class="btn ghost" data-d="no">ยกเลิก</button><button class="btn danger" data-d="ok">${esc(okLabel)}</button></div></div>`;
+$("dlg").classList.add("show");
+}
+function closeAsk(){ dlgOk = null; $("dlg").classList.remove("show"); }
+$("dlg").addEventListener("click", e=>{
+const b = e.target.closest("[data-d]");
+if(b && b.dataset.d==="ok" && dlgOk){ const f = dlgOk; closeAsk(); f(); return; }
+if(b || e.target === $("dlg")) closeAsk();
+});
+let sheetKind = null, sheetId = null, renameMode = false;
+function openSheet(kind, id){
+sheetKind = kind; sheetId = id || null; renameMode = false;
+renderSheet();
+$("scrim").classList.add("show"); $("sheet").classList.add("show");
+$("sheet").scrollTop = 0;
+if(kind==="pick"){ const on = $("sheet").querySelector(".pick-row.on"); if(on) setTimeout(()=>on.scrollIntoView({block:"center"}),30); }
+}
+function closeSheet(){
+sheetKind = null; sheetId = null; renameMode = false;
+$("scrim").classList.remove("show"); $("sheet").classList.remove("show");
+}
+function renderSheet(){ if(sheetKind==="pick") renderPick(); else renderEdit(); }
+function renderPick(){
+const cur = curTopicId();
+$("sheet").setAttribute("aria-label","เลือกหัวข้อ");
 $("sheet").innerHTML = `
 <div class="grab"></div>
 <button class="x close" data-s="close" aria-label="ปิด">×</button>
-<h3 id="sheetTitle">${idx+1}. ${esc(t.title)}</h3>
+<h3>เลือกหัวข้อ</h3>
+<ul class="pick-list">${state.topics.map((t,i)=>`<li><button type="button" class="pick-row${t.id===cur?" on":""}" data-pick="${t.id}">
+<span class="num">${i+1}</span>
+<span class="t-main"><span class="t-title">${esc(t.title)}</span><span class="t-meta">${statusText[t.status]}${t.links.length?` · ${t.links.length} คลิป`:""}</span></span>
+${t.id===cur?CHECK:""}</button></li>`).join("")}</ul>`;
+}
+function renderEdit(){
+const idx = state.topics.findIndex(t=>t.id===sheetId);
+if(idx<0){ closeSheet(); return; }
+const t = state.topics[idx], c = sessionCount(t.id), enough = lineCount(t.summary) >= 3;
+$("sheet").setAttribute("aria-label","รายละเอียดหัวข้อ");
+$("sheet").innerHTML = `
+<div class="grab"></div>
+<button class="x close" data-s="close" aria-label="ปิด">×</button>
+${renameMode
+? `<div class="row" style="padding-right:44px"><input type="text" class="grow" id="renameIn" value="${esc(t.title)}" enterkeyhint="done" aria-label="ชื่อหัวข้อ"><button class="btn small" data-s="renameSave">ตกลง</button></div>`
+: `<h3>${idx+1}. ${esc(t.title)}</h3>`}
 <div class="status">${statusText[t.status]}${c?` · เรียนแล้ว ${c} ครั้ง`:""}</div>
-<label>คลิปของหัวข้อนี้</label>
+<div class="lbl">คลิปของหัวข้อนี้</div>
 <ul class="links">${t.links.map((l,j)=>`<li>${linkHtml(l)}<button class="x" data-s="rmlink" data-j="${j}" aria-label="ลบคลิป">×</button></li>`).join("") || `<li><span style="color:var(--muted)">ยังไม่มีคลิป</span></li>`}</ul>
-<div class="row" style="margin-top:8px"><input type="text" class="grow" id="linkIn" placeholder="วางลิงก์หรือชื่อคลิป" enterkeyhint="done"><button class="btn ghost small" data-s="addlink">เพิ่ม</button></div>
+<div class="row" style="margin-top:8px"><input type="text" class="grow" id="linkIn" placeholder="วางลิงก์หรือชื่อคลิป" enterkeyhint="done" aria-label="เพิ่มคลิป"><button class="btn ghost small" data-s="addlink">เพิ่ม</button></div>
 <label for="sumIn">สรุปทั้งหัวข้อ (อย่างน้อย 3 บรรทัด ถึงจะกดจบได้)</label>
 <textarea id="sumIn" rows="5" placeholder="ถ้าต้องอธิบายหัวข้อนี้ให้เพื่อนฟัง จะพูดว่าอะไร">${esc(t.summary)}</textarea>
 ${t.status==="done"
@@ -430,24 +490,38 @@ ${t.status==="done"
 <div class="tools">
 <button class="btn ghost small" data-s="up" ${idx===0?"disabled":""}>เลื่อนขึ้น</button>
 <button class="btn ghost small" data-s="down" ${idx===state.topics.length-1?"disabled":""}>เลื่อนลง</button>
-<button class="btn ghost small" data-s="rename">เปลี่ยนชื่อ</button>
+<button class="btn ghost small" data-s="rename" ${renameMode?"disabled":""}>เปลี่ยนชื่อ</button>
 <button class="btn ghost small" data-s="del" style="color:var(--danger)">ลบหัวข้อ</button>
 </div>`;
+if(renameMode){ const r = $("renameIn"); if(r){ r.focus(); r.select(); } }
 }
 $("scrim").addEventListener("click", closeSheet);
 $("sheet").addEventListener("click", e=>{
+const pk = e.target.closest("[data-pick]");
+if(pk){
+formTopic = pk.dataset.pick; $("fClip").value = "";
+closeSheet(); renderToday(); return;
+}
 const b = e.target.closest("[data-s]"); if(!b) return;
 const idx = state.topics.findIndex(t=>t.id===sheetId), t = state.topics[idx];
 const act = b.dataset.s;
 if(act==="close"){ closeSheet(); return; }
+if(!t) return;
 if(act==="addlink"){ const v = $("linkIn").value.trim(); if(!v) return; t.links.push(v); if(t.status==="todo") t.status="learning"; }
 if(act==="rmlink"){ t.links.splice(+b.dataset.j,1); }
 if(act==="finish"){ t.summary = $("sumIn").value; if(lineCount(t.summary)<3) return; t.status="done"; persist(); renderAll(); closeSheet(); toast("จบหัวข้อแล้ว ไปต่อหัวข้อถัดไปได้เลย"); return; }
 if(act==="reopen"){ t.status="learning"; }
 if(act==="up" && idx>0){ [state.topics[idx-1],state.topics[idx]]=[state.topics[idx],state.topics[idx-1]]; }
 if(act==="down" && idx<state.topics.length-1){ [state.topics[idx+1],state.topics[idx]]=[state.topics[idx],state.topics[idx+1]]; }
-if(act==="rename"){ const v = prompt("ชื่อหัวข้อใหม่", t.title); if(!v||!v.trim()) return; t.title=v.trim(); }
-if(act==="del"){ if(!confirm(`ลบหัวข้อ "${t.title}"? บันทึกการเรียนเดิมยังอยู่`)) return; state.topics.splice(idx,1); persist(); renderAll(); closeSheet(); toast("ลบหัวข้อแล้ว"); return; }
+if(act==="rename"){ renameMode = true; renderSheet(); return; }
+if(act==="renameSave"){ const v = $("renameIn").value.trim(); if(!v) return; t.title = v; renameMode = false; }
+if(act==="del"){
+ask(`ลบหัวข้อ "${t.title}"? บันทึกการเรียนเดิมยังอยู่`, "ลบหัวข้อ", ()=>{
+const i = state.topics.findIndex(x=>x.id===sheetId); if(i<0) return;
+state.topics.splice(i,1); persist(); renderAll(); closeSheet(); toast("ลบหัวข้อแล้ว");
+});
+return;
+}
 persist(); renderAll(); renderSheet();
 });
 let sumTimer;
@@ -459,20 +533,25 @@ const fin = $("sheet").querySelector('[data-s="finish"]'); if(fin) fin.disabled 
 clearTimeout(sumTimer); sumTimer = setTimeout(persist, 700);
 });
 $("sheet").addEventListener("keydown", e=>{
-if(e.key==="Enter" && e.target.id==="linkIn"){ e.preventDefault(); $("sheet").querySelector('[data-s="addlink"]').click(); }
+if(e.key!=="Enter") return;
+if(e.target.id==="linkIn"){ e.preventDefault(); $("sheet").querySelector('[data-s="addlink"]').click(); }
+if(e.target.id==="renameIn"){ e.preventDefault(); $("sheet").querySelector('[data-s="renameSave"]').click(); }
 });
-document.addEventListener("keydown", e=>{ if(e.key==="Escape" && sheetId) closeSheet(); });
+document.addEventListener("keydown", e=>{
+if(e.key!=="Escape") return;
+if($("dlg").classList.contains("show")) closeAsk(); else if(sheetKind) closeSheet();
+});
 function renderAll(){ renderHero(); renderToday(); renderTopics(); renderHistory(); }
 document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>{
 document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected", x===b));
 document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active", v.id==="v-"+b.dataset.view));
-window.scrollTo(0,0);
+$("scroll").scrollTop = 0;
 }));
-$("fTopic").addEventListener("change", renderChips);
+$("topicBtn").addEventListener("click", ()=>openSheet("pick"));
 $("clipChips").addEventListener("click", e=>{
 if(e.target.closest("a")) return;
 const b = e.target.closest(".chip"); if(!b) return;
-const t = state.topics.find(x=>x.id===$("fTopic").value); if(!t) return;
+const t = state.topics.find(x=>x.id===curTopicId()); if(!t) return;
 $("fClip").value = t.links[+b.dataset.j]; renderChips();
 });
 const lines = [...document.querySelectorAll(".fLine")];
@@ -488,25 +567,27 @@ i.addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); (line
 });
 $("fQ").addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); e.target.blur(); } });
 saveBtn.addEventListener("click",()=>{
-const topicId = $("fTopic").value, clip = $("fClip").value.trim();
+const topicId = curTopicId(), clip = $("fClip").value.trim();
 const minutes = Math.max(0, parseInt($("fMin").value,10)||0);
 state.logs.push({ id:uid(), date:today(), topicId, clip, minutes, lines: lines.map(i=>i.value.trim()), question: $("fQ").value.trim(), at: Date.now() });
 const t = state.topics.find(x=>x.id===topicId);
 if(t){ if(t.status==="todo") t.status="learning"; if(clip && !t.links.includes(clip)) t.links.push(clip); }
+formTopic = topicId;
 const first = (logsByDay()[today()]||[]).length === 1;
 lines.forEach(i=>i.value=""); ["fClip","fMin","fQ"].forEach(id=>$(id).value="");
 document.activeElement && document.activeElement.blur();
 checkForm(); persist(); renderAll();
-window.scrollTo({top:0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
+$("scroll").scrollTo({top:0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
 toast(first ? `ได้แท่งเขียววันนี้แล้ว ติดต่อกัน ${streak()} วัน` : "บันทึกแล้ว");
 });
 $("history").addEventListener("click",e=>{
 const id = e.target.closest("[data-del]")?.dataset.del; if(!id) return;
-if(!confirm("ลบบันทึกนี้?")) return;
+ask("ลบบันทึกนี้?", "ลบบันทึก", ()=>{
 state.logs = state.logs.filter(l=>l.id!==id);
 persist(); renderAll(); toast("ลบบันทึกแล้ว");
 });
-$("topics").addEventListener("click",e=>{ const b = e.target.closest("[data-id]"); if(b) openSheet(b.dataset.id); });
+});
+$("topics").addEventListener("click",e=>{ const b = e.target.closest("[data-id]"); if(b) openSheet("edit", b.dataset.id); });
 function addTopic(){
 const inp = $("newTopic"), v = inp.value.trim(); if(!v) return;
 state.topics.push({id:uid(), title:v, status:"todo", links:[], summary:""});
@@ -514,9 +595,13 @@ inp.value=""; inp.blur(); persist(); renderAll(); toast("เพิ่มหั�
 }
 $("addTopic").addEventListener("click",addTopic);
 $("newTopic").addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); addTopic(); } });
+["gesturestart","gesturechange","gestureend"].forEach(ev=>document.addEventListener(ev,e=>e.preventDefault(),{passive:false}));
+document.addEventListener("touchmove",e=>{ if(e.touches.length>1) e.preventDefault(); },{passive:false});
+document.addEventListener("wheel",e=>{ if(e.ctrlKey) e.preventDefault(); },{passive:false});
 window.matchMedia?.("(prefers-color-scheme: dark)").addEventListener?.("change",renderHero);
 new MutationObserver(renderHero).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
 renderAll();
+if(mig.changed) persist();
 syncEl.textContent = "ข้อมูลบันทึกไว้ในเครื่องนี้";
 (async ()=>{
 try{
@@ -527,9 +612,11 @@ const id = await user.id(); if(!id) return;
 ref = db.collection("data/users/"+id).doc("tracker");
 const snap = await ref.get();
 if(snap.exists && valid(snap.data())){
-state = JSON.parse(JSON.stringify(snap.data()));
+const m = migrate(JSON.parse(JSON.stringify(snap.data())));
+state = m.s;
 try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch(e){}
-renderAll(); if(sheetId) renderSheet();
+renderAll(); if(sheetKind) renderSheet();
+if(m.changed) persist();
 } else {
 await ref.set(JSON.parse(JSON.stringify(state)));
 }

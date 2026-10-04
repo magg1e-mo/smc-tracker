@@ -49,7 +49,7 @@ button{cursor:pointer;touch-action:manipulation}
 svg{max-width:100%}
 .app{position:fixed;top:0;bottom:0;left:0;right:0;margin:0 auto;max-width:430px;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
 @media (min-width:431px){.app{border-left:1px solid var(--line);border-right:1px solid var(--line)}}
-.top{flex:none;background:var(--bg);padding:calc(12px + env(safe-area-inset-top,0px)) 18px 10px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.top{background:var(--bg);padding:calc(12px + env(safe-area-inset-top,0px)) 18px 10px;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .top h1{font-size:1.45rem;font-weight:700}
 .streak{display:flex;align-items:baseline;gap:6px}
 .streak b{font-family:var(--display);font-size:2.1rem;line-height:1;color:var(--bull);font-weight:700}
@@ -163,11 +163,11 @@ background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;opaci
 </head>
 <body>
 <div class="app" id="app">
+<div class="scroll" id="scroll">
 <header class="top">
 <h1>ตั้งใจหน่อยแม็กกี้ !</h1>
 <div class="streak" id="streak"><b>0</b><span>วัน<br>ติดต่อกัน</span></div>
 </header>
-<div class="scroll" id="scroll">
 <main class="view active" id="v-today">
 <div class="panel chart">
 <svg id="candles" viewBox="0 0 360 130" role="img" aria-label="กราฟการเรียน 30 วันล่าสุด"></svg>

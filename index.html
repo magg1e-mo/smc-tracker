@@ -487,8 +487,16 @@ function openSheet(kind, id){
 sheetKind = kind; sheetId = id || null; renameMode = false;
 renderSheet();
 $("scrim").classList.add("show"); $("sheet").classList.add("show");
-$("sheet").scrollTop = 0;
-if(kind==="pick"){ const on = $("sheet").querySelector(".pick-row.on"); if(on) setTimeout(()=>on.scrollIntoView({block:"center"}),30); }
+const sh = $("sheet");
+sh.scrollTop = 0;
+if(kind==="pick"){
+const on = sh.querySelector(".pick-row.on");
+if(on){
+let y = 0; for(let el = on; el && el !== sh; el = el.offsetParent) y += el.offsetTop;
+sh.scrollTop = Math.max(0, y - (sh.clientHeight - on.offsetHeight) / 2);
+}
+}
+$("app").scrollTop = 0;
 }
 function closeSheet(){
 sheetKind = null; sheetId = null; renameMode = false;

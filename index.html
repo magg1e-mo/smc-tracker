@@ -255,6 +255,73 @@ padding:8px 18px calc(30px + env(safe-area-inset-bottom,0px));transform:translat
 @keyframes ping{0%{transform:scale(1);opacity:.6}80%,100%{transform:scale(2.8);opacity:0}}
 @keyframes shine{0%,55%{left:-70%}100%{left:130%}}
 @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
+:root{--card-a:#D5EBE2;--card-b:#EEF7F3;--fld:#FFFFFF;--sheet:#FFFFFF;--edge:#8CC9B8;--edge-s:#8CC9B8;--edge-b:#8CC9B8;--bw:1.5px;--tabh:64px;--btn-ink:#fff;--glow:color-mix(in srgb,var(--acc) 30%,transparent)}
+@media (prefers-color-scheme: dark){:root{--card-a:#14261F;--card-b:#0E1B16;--fld:#0A1511;--sheet:#0C1914;--edge:rgba(255,255,255,.16);--edge-s:rgba(255,255,255,.16);--edge-b:rgba(255,255,255,.16);--bw:1.5px;--btn-a:#6FE0BA;--btn-b:#2FA98B;--btn-ink:#04201A;--muted:#A5C6B8;--glow:color-mix(in srgb,var(--acc) 45%,transparent)}}
+.glass,.glass-s,.glass-b,.glass-x{-webkit-backdrop-filter:none;backdrop-filter:none}
+.glass,.glass-s{background:linear-gradient(165deg,var(--card-a),var(--card-b));border:1.5px solid var(--edge);box-shadow:none}
+.glass-x{background:var(--sheet);border-top:1.5px solid var(--edge);box-shadow:0 -18px 40px var(--sh-b)}
+.top h1{font-size:24px}
+.streak{padding:5px 14px 5px 12px}
+.streak b{font-size:28px}
+.field,input[type=text],input[type=email],input[type=password],input[type=number],textarea{background:var(--fld);border:1.5px solid var(--edge);box-shadow:none}
+input[type=text],input[type=email],input[type=password],input[type=number],textarea{border-radius:14px;min-height:46px;padding:10px 14px}
+textarea{min-height:112px}
+input[type=text]:focus,input[type=email]:focus,input[type=password]:focus,input[type=number]:focus,textarea:focus,.field:focus{outline:2px solid var(--acc);outline-offset:1px;background:var(--fld);border-color:var(--edge);box-shadow:none}
+.picker{border-radius:14px}
+.btn{color:var(--btn-ink);box-shadow:none}
+.btn.block-btn{border-radius:18px;min-height:52px}
+.btn:disabled{background:var(--card-a);color:var(--muted);box-shadow:inset 0 0 0 1.5px var(--edge)}
+.btn.ghost{background:transparent;border:1.5px solid var(--edge);color:var(--head);box-shadow:none}
+.btn.ghost:disabled{opacity:.5;background:transparent;color:var(--head)}
+.btn.danger{background:linear-gradient(180deg,#B84A33,#9C3A26);color:#fff}
+.chip{background:transparent;border:1.5px dashed var(--edge);border-radius:14px}
+.chip.on{border:1.5px solid var(--acc);box-shadow:0 0 0 3px var(--glow);background:var(--fld);font-weight:500}
+.chiprow .open{border:1.5px solid var(--edge);background:transparent;border-radius:14px}
+.nudge{display:flex;align-items:center;gap:10px;margin:0 2px;font-weight:400}
+.nudge::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--gold);flex:none}
+.statline{border-radius:26px;padding:12px 4px}
+.next{border-radius:18px;background:var(--fld);padding:12px 12px 4px}
+.nx-thumb{position:relative;flex:none;width:96px;aspect-ratio:16/9;border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center;text-decoration:none;background:linear-gradient(135deg,color-mix(in srgb,var(--acc),#000 38%),var(--acc))}
+.nx-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.nx-thumb i{position:relative;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.9);display:flex;align-items:center;justify-content:center}
+.nx-thumb svg{width:14px;height:14px;margin-left:2px}
+.done-box .tick{color:var(--btn-ink)}
+.tsheet{background:var(--sheet);border:1.5px solid var(--edge);border-bottom:0;box-shadow:0 -18px 40px var(--sh-b);padding-bottom:calc(var(--tabh) + 24px + env(safe-area-inset-bottom,0px))}
+.scroll{padding-bottom:calc(var(--tabh) + 24px + env(safe-area-inset-bottom,0px))}
+.scroll.intro{padding-bottom:0}
+.tabs{left:0;right:0;bottom:0;height:calc(var(--tabh) + env(safe-area-inset-bottom,0px));border-radius:0;padding:6px 12px calc(6px + env(safe-area-inset-bottom,0px));background:var(--bg);border:0;border-top:1.5px solid var(--edge);box-shadow:none}
+.bubble{top:6px;bottom:calc(6px + env(safe-area-inset-bottom,0px));left:12px;width:calc((100% - 24px) / 3);border-radius:16px;background:var(--card-a);box-shadow:none}
+.sheet{border-radius:28px 28px 0 0}
+.grab{background:var(--edge)}
+.sheet h3{font-weight:600}
+.sheet .close{border:1.5px solid var(--edge);border-radius:14px;color:var(--head);font-size:20px}
+.clips{gap:10px;margin-top:6px}
+.clip{display:flex;gap:12px;padding:10px;border-radius:20px;border:1.5px solid var(--edge);background:linear-gradient(165deg,var(--card-a),var(--card-b))}
+.clip-th{flex:none;width:120px;display:block;text-decoration:none;color:var(--ink);align-self:flex-start}
+.clip .clip-thumb{border-radius:12px;border:0;box-shadow:none}
+.clip-play{width:34px;height:34px;margin:-17px 0 0 -17px}
+.clip-play svg{width:16px;height:16px;margin-left:2px}
+.clip-dur{right:6px;bottom:5px;padding:0 6px;border-radius:6px;font-size:12px;line-height:18px}
+.clip-info{min-width:0;flex:1;padding-right:34px;padding-bottom:30px}
+.clip .clip-title{margin:0;padding:0;min-height:0;font-size:15px;font-weight:500;line-height:1.35;color:var(--head)}
+.clip-state{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:4px}
+.clip-state svg{color:var(--acc-d)}
+.clip-x{right:0;top:0}
+.clip-x span{width:24px;height:24px;font-size:16px;line-height:24px}
+.clip-add{right:2px;bottom:2px}
+.clip-add span{color:var(--btn-ink)}
+#v-topics>.panel,#v-history>.panel{background:none;border:0;box-shadow:none;padding:0}
+#v-topics .progress{margin:8px 0 12px}
+ol.topics{display:flex;flex-direction:column;gap:8px}
+.topic,.topic:first-child{border:0}
+.topic-head{min-height:64px;padding:8px 14px;border-radius:20px;border:1.5px solid var(--edge);background:linear-gradient(165deg,var(--card-a),var(--card-b))}
+.num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;color:var(--muted);border:1.5px dashed var(--edge);text-align:center}
+.is-done .num{background:linear-gradient(180deg,var(--btn-a),var(--btn-b));color:var(--btn-ink);border:0}
+.is-learning .num{border:1.5px solid var(--acc);background:var(--fld);color:var(--head)}
+.num svg{width:16px;height:16px;margin:0}
+.pick-row .num{margin-right:0}
+.add-topic{margin-top:14px}
+.entry{border-radius:22px;padding:14px 8px 14px 14px;gap:4px}
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -552,7 +619,7 @@ if(!clipManual && !$("fClip").value.trim() && !n.all) $("fClip").value = n.link;
 const {url,label} = parseLink(n.link), sp = splitLabel(label), i = t.links.indexOf(n.link)+1;
 box.hidden = false;
 box.innerHTML = `<span class="cap">${n.all?"ดูครบทุกคลิปแล้ว เลือกดูซ้ำได้":"คลิปถัดไป"} · ${i}/${t.links.length}</span>`+
-`<div class="nx-row">${url?`<a class="nx-play press" href="${esc(url)}" target="_blank" rel="noopener" aria-label="เปิดคลิป ${esc(sp.title)}">${PLAY("#fff")}</a>`:""}`+
+`<div class="nx-row">${url?`<a class="nx-thumb press" href="${esc(url)}" target="_blank" rel="noopener" aria-label="เปิดคลิป ${esc(sp.title)}">${ytId(url)?`<img src="https://i.ytimg.com/vi/${ytId(url)}/mqdefault.jpg" alt="" loading="lazy" onerror="this.remove()">`:""}<i>${PLAY("#0F5A47")}</i></a>`:""}`+
 `<div class="nx-t"><b>${esc(sp.title)}</b>${sp.dur?`<span>${esc(sp.dur)}</span>`:""}</div></div>`+
 (t.links.length>1?`<button type="button" class="linkbtn" data-nx="swap">${chipsOpen?"ซ่อนรายการ":"เปลี่ยนคลิป"}</button>`:"");
 }
@@ -666,14 +733,15 @@ return {title: m ? String(label).replace(m[0],"").trim() : label, dur: m ? m[1] 
 function clipCard(t, l, j){
 const {url,label} = parseLink(l), id = ytId(url), sp = splitLabel(label);
 const seen = state.logs.some(x=>x.topicId===t.id && x.clip===l);
-const inner = `<div class="clip-thumb">`+
+const thumb = `<div class="clip-thumb">`+
 (id ? `<img src="https://i.ytimg.com/vi/${id}/mqdefault.jpg" alt="" loading="lazy" onerror="this.remove()">` : "")+
 `<span class="clip-play"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="#0B6B4F"/></svg></span>`+
-(seen ? `<span class="clip-seen"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>ดูแล้ว</span>` : "")+
 (sp.dur ? `<span class="clip-dur">${esc(sp.dur)}</span>` : "")+
-`</div><div class="clip-title">${esc(sp.title)}</div>`;
+`</div>`;
+const state_ = seen ? `${CHECK_S}ดูแล้ว` : "ยังไม่ได้ดู";
 return `<div class="clip">`+
-(url ? `<a class="press" href="${esc(url)}" target="_blank" rel="noopener">${inner}</a>` : `<div>${inner}</div>`)+
+(url ? `<a class="clip-th press" href="${esc(url)}" target="_blank" rel="noopener" aria-label="เปิดคลิป ${esc(sp.title)}">${thumb}</a>` : `<div class="clip-th">${thumb}</div>`)+
+`<div class="clip-info"><div class="clip-title">${esc(sp.title)}</div><div class="clip-state">${state_}</div></div>`+
 `<button class="clip-x" data-s="rmlink" data-j="${j}" aria-label="ลบคลิป"><span>×</span></button>`+
 `<button class="clip-add press" data-s="uselink" data-j="${j}" aria-label="บันทึกการเรียนคลิปนี้"><span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span></button></div>`;
 }

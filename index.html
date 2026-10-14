@@ -55,7 +55,7 @@ textarea{resize:none;min-height:112px}
 .app{position:fixed;top:0;bottom:0;left:0;right:0;margin:0 auto;max-width:430px;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
 @media (min-width:431px){.app{border-left:1px solid var(--line);border-right:1px solid var(--line)}}
 .scroll{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:0 14px calc(var(--tabh) + 44px + env(safe-area-inset-bottom,0px))}
-.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 -14px;padding:calc(16px + env(safe-area-inset-top,0px)) 18px 8px}
+.top{position:sticky;top:0;z-index:6;background:var(--bg);display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 -14px;padding:calc(16px + env(safe-area-inset-top,0px)) 18px 8px}
 .top h1{font-size:26px;font-weight:600;line-height:1.15;letter-spacing:-.01em;color:var(--head)}
 .streak{display:flex;align-items:center;gap:8px;padding:6px 14px 6px 12px;border-radius:999px;animation-delay:120ms}
 .streak svg{stroke:var(--acc-d)}
@@ -64,6 +64,21 @@ textarea{resize:none;min-height:112px}
 .streak.zero svg{stroke:var(--zero)}
 .view{display:none}
 .view.active{display:flex;flex-direction:column;gap:14px;padding-top:6px}
+#v-today.active{gap:0;padding-top:0}
+.scroll.intro{padding-bottom:0}
+.tsheet{position:relative;z-index:2;margin:0 -14px;padding:22px 14px calc(var(--tabh) + 44px + env(safe-area-inset-bottom,0px));min-height:var(--heroH,560px);border-radius:30px 30px 0 0;background:var(--bg);border:var(--bw) solid var(--edge);border-bottom:0;box-shadow:0 -18px 40px var(--sh-b);display:flex;flex-direction:column;gap:14px}
+.hero{position:sticky;top:var(--hh,76px);z-index:1;height:var(--heroH,560px);margin:0 -14px;overflow:hidden}
+.hglow{position:absolute;left:50%;top:42%;width:340px;height:340px;margin:-170px 0 0 -170px;border-radius:50%;background:radial-gradient(closest-side,color-mix(in srgb,var(--acc) 50%,transparent),transparent 72%);filter:blur(6px)}
+.hfloor{position:absolute;left:50%;top:42%;width:260px;height:26px;margin:118px 0 0 -130px;border-radius:50%;background:radial-gradient(closest-side,var(--sh-b),transparent)}
+.hstage{position:absolute;left:50%;top:42%;width:0;height:0}
+.hb{position:absolute;bottom:-110px;width:84px;border-radius:20px;overflow:hidden;will-change:transform;background:linear-gradient(180deg,var(--acc-l),var(--acc) 58%,color-mix(in srgb,var(--acc),#000 38%));box-shadow:inset 0 0 0 3px rgba(255,255,255,.5),inset 0 7px 12px rgba(255,255,255,.55),inset 0 -22px 30px rgba(0,40,28,.3),0 22px 34px var(--sh-b);animation:hrise 1s cubic-bezier(.2,.8,.2,1) both;animation-delay:var(--d,0s)}
+.hb::before{content:"";position:absolute;left:7px;top:7px;bottom:46%;width:34%;border-radius:14px;background:linear-gradient(180deg,rgba(255,255,255,.62),rgba(255,255,255,.08))}
+.hb::after{content:"";position:absolute;top:-10%;bottom:-10%;left:0;width:46%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.75),transparent);transform:translateX(-420%) skewX(-18deg);animation:hsheen 4.2s ease-in-out infinite;animation-delay:var(--d,0s)}
+.hcap{position:absolute;left:0;right:0;bottom:22px;margin:0;text-align:center;font-size:14px;color:var(--muted)}
+.hcap svg{display:block;margin:2px auto 0;animation:hnudge 1.6s ease-in-out infinite}
+@keyframes hrise{from{translate:0 90px;opacity:0}}
+@keyframes hsheen{0%,38%{transform:translateX(-420%) skewX(-18deg)}78%,100%{transform:translateX(520%) skewX(-18deg)}}
+@keyframes hnudge{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
 .view h2{font-size:18px;font-weight:500;margin:6px 4px 0}
 .panel{border-radius:26px;padding:16px}
 .chart{padding:14px 12px 10px}
@@ -211,7 +226,9 @@ padding:8px 18px calc(30px + env(safe-area-inset-bottom,0px));transform:translat
 .clip-play svg{margin-left:3px}
 .clip-seen{position:absolute;left:10px;top:10px;display:flex;align-items:center;gap:5px;padding:4px 10px 4px 8px;border-radius:99px;background:rgba(255,255,255,.92);color:#0B6B4F;font-size:12px;font-weight:500}
 .clip-dur{position:absolute;right:10px;bottom:10px;padding:2px 8px;border-radius:8px;background:rgba(8,24,18,.78);color:#fff;font-size:12px;font-weight:400}
-.clip-title{margin:8px 4px 0;font-size:14px;font-weight:400;line-height:1.35}
+.clip-title{margin:8px 4px 0;padding-right:44px;min-height:36px;font-size:14px;font-weight:400;line-height:1.35}
+.clip-add{position:absolute;right:0;bottom:-10px;width:44px;height:44px;background:none;border:0;padding:0;display:flex;align-items:center;justify-content:center}
+.clip-add span{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;background:linear-gradient(180deg,var(--btn-a),var(--btn-b));box-shadow:0 4px 10px var(--sh),inset 0 1px 0 rgba(255,255,255,.5)}
 .clip-x{position:absolute;right:4px;top:4px;width:44px;height:44px;background:none;border:0;padding:0;display:flex;align-items:center;justify-content:center}
 .clip-x span{width:30px;height:30px;border-radius:50%;background:rgba(8,24,18,.62);color:#fff;font-size:18px;line-height:30px;text-align:center}
 .tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px}
@@ -243,12 +260,23 @@ padding:8px 18px calc(30px + env(safe-area-inset-bottom,0px));transform:translat
 </head>
 <body>
 <div class="app" id="app">
-<div class="scroll" id="scroll">
+<div class="scroll intro" id="scroll">
 <header class="top">
 <h1 id="title">ตั้งใจหน่อยแม็กกี้ !</h1>
 <div class="streak glass rise" id="streak"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 4v16M5 8h4v7H5zM17 3v14M15 6h4v8h-4z"/></svg><b>0</b><span>วัน<br>ติดต่อกัน</span></div>
 </header>
 <main class="view active" id="v-today">
+<section class="hero" id="hero" aria-hidden="true">
+<div class="hglow" id="hglow"></div>
+<div class="hfloor" id="hfloor"></div>
+<div class="hstage">
+<div class="hb" style="height:150px;left:-136px;--d:0s"></div>
+<div class="hb" style="height:230px;left:-42px;--d:.22s"></div>
+<div class="hb" style="height:185px;left:52px;--d:.44s"></div>
+</div>
+<p class="hcap" id="hcap">เลื่อนลงเพื่อเริ่มวันนี้<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></p>
+</section>
+<div class="tsheet" id="tsheet">
 <div class="glass panel chart rise" style="animation-delay:60ms">
 <div class="bars" id="candles" role="img" aria-label="กราฟการเรียน 30 วันล่าสุด"></div>
 <div class="chart-foot"><span id="chartStart"></span><span class="now"><span class="pingdot"><i class="ping"></i><i></i></span>วันนี้</span></div>
@@ -297,6 +325,7 @@ padding:8px 18px calc(30px + env(safe-area-inset-bottom,0px));transform:translat
 </div>
 <div class="statline glass-s rise" id="stats" style="animation-delay:200ms"></div>
 <p class="sync" id="sync">กำลังโหลด…</p>
+</div>
 </main>
 <main class="view" id="v-topics">
 <div class="glass panel rise">
@@ -645,7 +674,8 @@ const inner = `<div class="clip-thumb">`+
 `</div><div class="clip-title">${esc(sp.title)}</div>`;
 return `<div class="clip">`+
 (url ? `<a class="press" href="${esc(url)}" target="_blank" rel="noopener">${inner}</a>` : `<div>${inner}</div>`)+
-`<button class="clip-x" data-s="rmlink" data-j="${j}" aria-label="ลบคลิป"><span>×</span></button></div>`;
+`<button class="clip-x" data-s="rmlink" data-j="${j}" aria-label="ลบคลิป"><span>×</span></button>`+
+`<button class="clip-add press" data-s="uselink" data-j="${j}" aria-label="บันทึกการเรียนคลิปนี้"><span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span></button></div>`;
 }
 function renderEdit(){
 const idx = state.topics.findIndex(t=>t.id===sheetId);
@@ -698,6 +728,11 @@ l.lines = ls; l.minutes = Math.max(0, parseInt($("eMin").value,10)||0); l.questi
 persist(); renderAll(); closeSheet(); toast("แก้ไขแล้ว"); return;
 }
 if(!t) return;
+if(act==="uselink"){
+const l = t.links[+b.dataset.j]; if(!l) return;
+formTopic = t.id; $("fClip").value = l; clipManual = true; chipsOpen = false; formOpen = true;
+closeSheet(); renderToday(); showTab("today", $("topicLbl")); return;
+}
 if(act==="rmlink"){
 const j = +b.dataset.j, name = splitLabel(parseLink(t.links[j]).label).title;
 withUndo(`ลบคลิป "${name}" แล้ว`, ()=>{ const tt = state.topics.find(x=>x.id===sheetId); if(tt) tt.links.splice(j,1); });
@@ -742,13 +777,44 @@ if(e.key!=="Escape") return;
 if($("dlg").classList.contains("show")) closeAsk(); else if(sheetKind) closeSheet();
 });
 function renderAll(){ renderHero(); renderToday(); renderTopics(); renderHistory(); }
+const hb = [...document.querySelectorAll(".hb")], hglow = $("hglow"), hfloor = $("hfloor"), hcap = $("hcap");
+const calmMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let introH = 560, introTravel = 420, introRaf = 0;
+const clamp01 = v => v < 0 ? 0 : v > 1 ? 1 : v;
+function drawIntro(){
+const p = calmMotion ? 0 : clamp01($("scroll").scrollTop / introTravel), e = 1 - Math.pow(1-p, 3);
+[-1,0,1].forEach((d,i)=>{
+hb[i].style.transform = `translate(${(d*120*e).toFixed(1)}px,${(-70*e-(d===0?20*e:0)).toFixed(1)}px) rotate(${(d*14*e).toFixed(1)}deg) scale(${(1-.32*e).toFixed(3)})`;
+hb[i].style.opacity = (1 - .85*clamp01((p-.35)/.65)).toFixed(2);
+});
+hglow.style.opacity = (1-e).toFixed(2); hfloor.style.opacity = (.9*(1-e)).toFixed(2); hcap.style.opacity = (1-clamp01(p*5)).toFixed(2);
+}
+function layoutIntro(){
+const sc = $("scroll"), hh = document.querySelector(".top").offsetHeight;
+introH = Math.max(320, sc.clientHeight - hh);
+introTravel = Math.min(520, introH * .75);
+sc.style.setProperty("--hh", hh + "px"); sc.style.setProperty("--heroH", introH + "px");
+drawIntro();
+}
+function toSheet(target){
+const sc = $("scroll");
+let y = introH;
+if(target) y = target.getBoundingClientRect().top - sc.getBoundingClientRect().top + sc.scrollTop - document.querySelector(".top").offsetHeight - 14;
+sc.scrollTop = Math.max(introH, y); drawIntro();
+}
+$("scroll").addEventListener("scroll", ()=>{ if(introRaf) return; introRaf = requestAnimationFrame(()=>{ introRaf = 0; drawIntro(); }); }, {passive:true});
+window.addEventListener("resize", layoutIntro);
+window.addEventListener("load", layoutIntro);
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(layoutIntro);
+layoutIntro();
 const TAB_ORDER = ["today","topics","history"];
-function showTab(name){
+function showTab(name, atSheet){
 document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected", x.dataset.view===name));
 document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active", v.id==="v-"+name));
 $("bubble").style.transform = "translateX(" + (TAB_ORDER.indexOf(name)*100) + "%)";
 $("scroll").scrollTop = 0;
-if(name==="today"){ replay = true; renderHero(); }
+$("scroll").classList.toggle("intro", name==="today");
+if(name==="today"){ replay = true; renderHero(); if(atSheet) toSheet(atSheet === true ? null : atSheet); else drawIntro(); }
 if(name==="topics"){ animList.topics = true; renderTopics(); }
 if(name==="history"){ animList.history = true; renderHistory(); }
 }
@@ -797,7 +863,7 @@ clipManual = false; chipsOpen = false; formOpen = false; $("more").open = false;
 document.activeElement && document.activeElement.blur();
 checkForm(); persist(); renderAll();
 const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
-$("scroll").scrollTo({top:0, behavior: calm ? "auto" : "smooth"});
+$("scroll").scrollTo({top:introH, behavior: calm ? "auto" : "smooth"});
 if(first) celebrate(calm);
 toast(first ? `ได้แท่งเขียววันนี้แล้ว ติดต่อกัน ${streak()} วัน` : "บันทึกแล้ว");
 });

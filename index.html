@@ -3,23 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="color-scheme" content="light dark">
+<meta name="color-scheme" content="dark">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="SMC Tracker">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#F4F7F4" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#09130F" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#09130F">
 <title>SMC Tracker</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-color-scheme:light dark;
+color-scheme:dark;
 --acc:#1F8A70; --acc-l:color-mix(in srgb,var(--acc),#fff 38%);
 --blur:18px; --danger:#B4452F;
 --display:"Kanit",system-ui,sans-serif;
@@ -27,7 +26,7 @@ color-scheme:light dark;
 --tabh:66px;
 --bg:#FFFFFF;--ink:#064E3B;--muted:#115E48;--faint:#336E5B;--tabm:#0A4A38;--line:rgba(6,78,59,.16);--axis:rgba(6,78,59,.2);--link:#0B6B4F;--hover:#064E3B;--gold:#6E4E0C;--btn-a:color-mix(in srgb,var(--acc),#000 14%);--btn-b:color-mix(in srgb,var(--acc),#000 36%);--tabsel:var(--acc-d);--zero:rgba(6,78,59,.35);--miss:rgba(6,78,59,.24);--grab:rgba(6,78,59,.25);--w:#fff;--hi:rgba(255,255,255,.5);--hi2:rgba(255,255,255,.45);--inset:rgba(255,255,255,.7);--inset2:rgba(255,255,255,.25);--edge:color-mix(in oklch,var(--acc) 60%,#fff);--edge-s:color-mix(in oklch,var(--acc) 42%,#fff);--edge-b:color-mix(in oklch,var(--acc) 55%,#fff);--sh:color-mix(in srgb,var(--acc) 26%,transparent);--sh-b:color-mix(in srgb,var(--acc) 34%,transparent);--sh-s:color-mix(in srgb,var(--acc) 22%,transparent);--sh-x:color-mix(in srgb,var(--acc) 28%,transparent);--fill:rgba(255,255,255,.95);--fill-f:#fff;--fill-inset:color-mix(in srgb,var(--acc) 14%,transparent);--ring:color-mix(in srgb,var(--acc) 22%,transparent);--chip:rgba(255,255,255,.88);--chip-on:color-mix(in oklch,var(--acc) 22%,#fff);--ghost:rgba(255,255,255,.9);--ghost-edge:color-mix(in oklch,var(--acc) 45%,#fff);--track:rgba(255,255,255,.95);--scrim:rgba(8,40,30,.38);--sheet-t:color-mix(in oklch,var(--acc) 36%,rgba(255,255,255,.94));--sheet-b:rgba(255,255,255,.97);--bar-a:color-mix(in oklch,var(--acc) 52%,rgba(255,255,255,.62));--bar-b:color-mix(in oklch,var(--acc) 40%,rgba(255,255,255,.58));--bub-a:rgba(255,255,255,.98);--bub-b:rgba(255,255,255,.8);--bub-sh:rgba(14,84,62,.22);--toast:linear-gradient(180deg,rgba(13,43,34,.9),rgba(13,43,34,.8));--toast-c:#F2FBF6;--acc-d:color-mix(in srgb,var(--acc),#000 32%);--g1:color-mix(in oklch,var(--acc) 40%,#fff);--g2:color-mix(in oklch,var(--acc) 30%,#fff);--g3:color-mix(in oklch,var(--acc-l) 34%,#fff);--s1:color-mix(in oklch,var(--acc) 48%,#fff);--s2:color-mix(in oklch,var(--acc) 36%,#fff);--bw:1.5px;--head:#0D2B22;--label:#0D2B22;
 }
-@media (prefers-color-scheme: dark){:root{--bg:#09130F;--ink:#E4F3EC;--muted:#9BBBAE;--faint:#93B3A5;--tabm:#A5C6B8;--btn-a:var(--acc-l);--btn-b:var(--acc);--tabsel:#A8F2DA;--line:rgba(255,255,255,.08);--axis:rgba(255,255,255,.12);--link:#5FD9B2;--hover:#8CF0CE;--gold:#E3B94F;--zero:rgba(255,255,255,.28);--miss:rgba(255,255,255,.16);--grab:rgba(255,255,255,.2);--w:#0E1B16;--hi:rgba(255,255,255,.1);--hi2:rgba(255,255,255,.08);--inset:rgba(255,255,255,.14);--inset2:rgba(255,255,255,.04);--edge:rgba(255,255,255,.1);--edge-s:rgba(255,255,255,.09);--edge-b:rgba(255,255,255,.14);--sh:rgba(0,0,0,.45);--sh-b:rgba(0,0,0,.5);--sh-s:rgba(0,0,0,.3);--sh-x:rgba(0,0,0,.55);--fill:rgba(255,255,255,.06);--fill-f:rgba(255,255,255,.1);--fill-inset:rgba(0,0,0,.35);--ring:color-mix(in srgb,var(--acc) 40%,transparent);--chip:rgba(255,255,255,.05);--chip-on:color-mix(in srgb,var(--acc) 26%,#0E1B16);--ghost:rgba(255,255,255,.07);--ghost-edge:rgba(255,255,255,.14);--track:rgba(255,255,255,.1);--scrim:rgba(0,0,0,.6);--sheet-t:color-mix(in srgb,var(--acc) 20%,rgba(18,32,27,.92));--sheet-b:rgba(14,26,21,.94);--bar-a:color-mix(in srgb,var(--acc) 22%,rgba(16,30,25,.7));--bar-b:color-mix(in srgb,var(--acc-l) 10%,rgba(14,26,21,.68));--bub-a:rgba(255,255,255,.2);--bub-b:rgba(255,255,255,.07);--bub-sh:rgba(0,0,0,.4);--toast:linear-gradient(180deg,rgba(228,243,236,.96),rgba(206,230,219,.92));--toast-c:#0D2B22;--acc-d:color-mix(in srgb,var(--acc-l),#fff 12%);--g1:color-mix(in srgb,var(--acc) 20%,var(--w));--g2:color-mix(in srgb,var(--acc) 9%,var(--w));--g3:color-mix(in srgb,var(--acc-l) 16%,var(--w));--s1:color-mix(in srgb,var(--acc) 17%,var(--w));--s2:color-mix(in srgb,var(--acc-l) 9%,var(--w));--bw:1px;--head:var(--ink);--label:var(--muted);--danger:#E07A63}}
+@media all{:root{--bg:#09130F;--ink:#E4F3EC;--muted:#9BBBAE;--faint:#93B3A5;--tabm:#A5C6B8;--btn-a:var(--acc-l);--btn-b:var(--acc);--tabsel:#A8F2DA;--line:rgba(255,255,255,.08);--axis:rgba(255,255,255,.12);--link:#5FD9B2;--hover:#8CF0CE;--gold:#E3B94F;--zero:rgba(255,255,255,.28);--miss:rgba(255,255,255,.16);--grab:rgba(255,255,255,.2);--w:#0E1B16;--hi:rgba(255,255,255,.1);--hi2:rgba(255,255,255,.08);--inset:rgba(255,255,255,.14);--inset2:rgba(255,255,255,.04);--edge:rgba(255,255,255,.1);--edge-s:rgba(255,255,255,.09);--edge-b:rgba(255,255,255,.14);--sh:rgba(0,0,0,.45);--sh-b:rgba(0,0,0,.5);--sh-s:rgba(0,0,0,.3);--sh-x:rgba(0,0,0,.55);--fill:rgba(255,255,255,.06);--fill-f:rgba(255,255,255,.1);--fill-inset:rgba(0,0,0,.35);--ring:color-mix(in srgb,var(--acc) 40%,transparent);--chip:rgba(255,255,255,.05);--chip-on:color-mix(in srgb,var(--acc) 26%,#0E1B16);--ghost:rgba(255,255,255,.07);--ghost-edge:rgba(255,255,255,.14);--track:rgba(255,255,255,.1);--scrim:rgba(0,0,0,.6);--sheet-t:color-mix(in srgb,var(--acc) 20%,rgba(18,32,27,.92));--sheet-b:rgba(14,26,21,.94);--bar-a:color-mix(in srgb,var(--acc) 22%,rgba(16,30,25,.7));--bar-b:color-mix(in srgb,var(--acc-l) 10%,rgba(14,26,21,.68));--bub-a:rgba(255,255,255,.2);--bub-b:rgba(255,255,255,.07);--bub-sh:rgba(0,0,0,.4);--toast:linear-gradient(180deg,rgba(228,243,236,.96),rgba(206,230,219,.92));--toast-c:#0D2B22;--acc-d:color-mix(in srgb,var(--acc-l),#fff 12%);--g1:color-mix(in srgb,var(--acc) 20%,var(--w));--g2:color-mix(in srgb,var(--acc) 9%,var(--w));--g3:color-mix(in srgb,var(--acc-l) 16%,var(--w));--s1:color-mix(in srgb,var(--acc) 17%,var(--w));--s2:color-mix(in srgb,var(--acc-l) 9%,var(--w));--bw:1px;--head:var(--ink);--label:var(--muted);--danger:#E07A63}}
 *,*::before,*::after{box-sizing:border-box;scrollbar-width:none;-webkit-tap-highlight-color:transparent}
 *::-webkit-scrollbar{display:none;width:0;height:0}
 html,body{height:100%;margin:0;overflow:hidden;overscroll-behavior:none;background:var(--bg)}
@@ -256,7 +255,7 @@ padding:8px 18px calc(30px + env(safe-area-inset-bottom,0px));transform:translat
 @keyframes shine{0%,55%{left:-70%}100%{left:130%}}
 @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
 :root{--card-a:#D5EBE2;--card-b:#EEF7F3;--fld:#FFFFFF;--sheet:#FFFFFF;--edge:#8CC9B8;--edge-s:#8CC9B8;--edge-b:#8CC9B8;--bw:1.5px;--tabh:64px;--btn-ink:#fff;--glow:color-mix(in srgb,var(--acc) 30%,transparent)}
-@media (prefers-color-scheme: dark){:root{--card-a:#14261F;--card-b:#0E1B16;--fld:#0A1511;--sheet:#0C1914;--edge:rgba(255,255,255,.16);--edge-s:rgba(255,255,255,.16);--edge-b:rgba(255,255,255,.16);--bw:1.5px;--btn-a:#6FE0BA;--btn-b:#2FA98B;--btn-ink:#04201A;--muted:#A5C6B8;--glow:color-mix(in srgb,var(--acc) 45%,transparent)}}
+@media all{:root{--card-a:#14261F;--card-b:#0E1B16;--fld:#0A1511;--sheet:#0C1914;--edge:rgba(255,255,255,.16);--edge-s:rgba(255,255,255,.16);--edge-b:rgba(255,255,255,.16);--bw:1.5px;--btn-a:#6FE0BA;--btn-b:#2FA98B;--btn-ink:#04201A;--muted:#A5C6B8;--glow:color-mix(in srgb,var(--acc) 45%,transparent)}}
 .glass,.glass-s,.glass-b,.glass-x{-webkit-backdrop-filter:none;backdrop-filter:none}
 .glass,.glass-s{background:linear-gradient(165deg,var(--card-a),var(--card-b));border:1.5px solid var(--edge);box-shadow:none}
 .glass-x{background:var(--sheet);border-top:1.5px solid var(--edge);box-shadow:0 -18px 40px var(--sh-b)}

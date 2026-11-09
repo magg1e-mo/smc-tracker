@@ -13,16 +13,18 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#09130F">
 <title>SMC Tracker</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
+@font-face{font-family:"FC Vision";font-weight:300;font-style:normal;font-display:swap;src:url(FCVision-Light.woff2) format("woff2")}
+@font-face{font-family:"FC Vision";font-weight:400;font-style:normal;font-display:swap;src:url(FCVision-Regular.woff2) format("woff2")}
+@font-face{font-family:"FC Vision";font-weight:500;font-style:normal;font-display:swap;src:url(FCVision-Medium.woff2) format("woff2")}
+@font-face{font-family:"FC Vision";font-weight:600;font-style:normal;font-display:swap;src:url(FCVision-SemiBold.woff2) format("woff2")}
+@font-face{font-family:"FC Vision";font-weight:700;font-style:normal;font-display:swap;src:url(FCVision-Bold.woff2) format("woff2")}
 :root{
 color-scheme:dark;
 --acc:#1F8A70; --acc-l:color-mix(in srgb,var(--acc),#fff 38%);
 --blur:18px; --danger:#B4452F;
---display:"Kanit",system-ui,sans-serif;
---body:"Kanit","Noto Sans Thai",-apple-system,system-ui,sans-serif;
+  --display:"FC Vision","Kanit",system-ui,sans-serif;
+  --body:"FC Vision","Noto Sans Thai",-apple-system,system-ui,sans-serif;
 --tabh:66px;
 --bg:#FFFFFF;--ink:#064E3B;--muted:#115E48;--faint:#336E5B;--tabm:#0A4A38;--line:rgba(6,78,59,.16);--axis:rgba(6,78,59,.2);--link:#0B6B4F;--hover:#064E3B;--gold:#6E4E0C;--btn-a:color-mix(in srgb,var(--acc),#000 14%);--btn-b:color-mix(in srgb,var(--acc),#000 36%);--tabsel:var(--acc-d);--zero:rgba(6,78,59,.35);--miss:rgba(6,78,59,.24);--grab:rgba(6,78,59,.25);--w:#fff;--hi:rgba(255,255,255,.5);--hi2:rgba(255,255,255,.45);--inset:rgba(255,255,255,.7);--inset2:rgba(255,255,255,.25);--edge:color-mix(in oklch,var(--acc) 60%,#fff);--edge-s:color-mix(in oklch,var(--acc) 42%,#fff);--edge-b:color-mix(in oklch,var(--acc) 55%,#fff);--sh:color-mix(in srgb,var(--acc) 26%,transparent);--sh-b:color-mix(in srgb,var(--acc) 34%,transparent);--sh-s:color-mix(in srgb,var(--acc) 22%,transparent);--sh-x:color-mix(in srgb,var(--acc) 28%,transparent);--fill:rgba(255,255,255,.95);--fill-f:#fff;--fill-inset:color-mix(in srgb,var(--acc) 14%,transparent);--ring:color-mix(in srgb,var(--acc) 22%,transparent);--chip:rgba(255,255,255,.88);--chip-on:color-mix(in oklch,var(--acc) 22%,#fff);--ghost:rgba(255,255,255,.9);--ghost-edge:color-mix(in oklch,var(--acc) 45%,#fff);--track:rgba(255,255,255,.95);--scrim:rgba(8,40,30,.38);--sheet-t:color-mix(in oklch,var(--acc) 36%,rgba(255,255,255,.94));--sheet-b:rgba(255,255,255,.97);--bar-a:color-mix(in oklch,var(--acc) 52%,rgba(255,255,255,.62));--bar-b:color-mix(in oklch,var(--acc) 40%,rgba(255,255,255,.58));--bub-a:rgba(255,255,255,.98);--bub-b:rgba(255,255,255,.8);--bub-sh:rgba(14,84,62,.22);--toast:linear-gradient(180deg,rgba(13,43,34,.9),rgba(13,43,34,.8));--toast-c:#F2FBF6;--acc-d:color-mix(in srgb,var(--acc),#000 32%);--g1:color-mix(in oklch,var(--acc) 40%,#fff);--g2:color-mix(in oklch,var(--acc) 30%,#fff);--g3:color-mix(in oklch,var(--acc-l) 34%,#fff);--s1:color-mix(in oklch,var(--acc) 48%,#fff);--s2:color-mix(in oklch,var(--acc) 36%,#fff);--bw:1.5px;--head:#0D2B22;--label:#0D2B22;
 }

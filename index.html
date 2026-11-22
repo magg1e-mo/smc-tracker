@@ -1008,15 +1008,12 @@ syncEl.innerHTML = esc(text) + (act ? ` <button type="button" class="linkbtn" da
 }
 function setSyncLocal(){
 if(fb && fb.user) return;
-setSync("บันทึกในเครื่องนี้", fb ? {k:"in", t:"เข้าสู่ระบบเพื่อซิงก์"} : null);
+setSync("บันทึกในเครื่องนี้");
 }
-function setSyncOn(){ setSync("ซิงก์แล้ว · " + (fb.user.email||""), {k:"out", t:"ออกจากระบบ"}); }
+function setSyncOn(){ setSync("ซิงก์อัตโนมัติ · ข้อมูลเดียวกันทุกเครื่อง"); }
 syncEl.addEventListener("click", e=>{
 const b = e.target.closest("[data-sync]"); if(!b || !fb) return;
-if(b.dataset.sync==="in"){ openSheet("auth"); return; }
-ask("ออกจากระบบ? ข้อมูลยังอยู่ในเครื่องนี้ และกลับมาซิงก์ได้ทุกเมื่อ", "ออกจากระบบ", async ()=>{
-try{ await fb.SDK.signOut(fb.auth); toast("ออกจากระบบแล้ว"); }catch(e){ toast("ออกจากระบบไม่สำเร็จ"); }
-});
+if(b.dataset.sync==="retry") connectShared();
 });
 function mergeLogs(a, b){
 const seen = new Set(), out = [];
@@ -1053,7 +1050,7 @@ return fb.SDK.setDoc(fb.ref, {json: JSON.stringify(state), u: state.u || 0});
 function fbPushSoon(){
 if(!fb || !fb.user) return;
 clearTimeout(fbTimer);
-fbTimer = setTimeout(()=>{ fbPushNow().catch(()=>setSync("ซิงก์ไม่สำเร็จ ข้อมูลยังอยู่ในเครื่อง", {k:"out", t:"ออกจากระบบ"})); }, 700);
+fbTimer = setTimeout(()=>{ fbPushNow().catch(()=>setSync("ซิงก์ไม่สำเร็จ ข้อมูลยังอยู่ในเครื่อง", {k:"retry", t:"ลองใหม่"})); }, 700);
 }
 function adopt(next){
 state = next;
@@ -1061,25 +1058,16 @@ try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){}
 renderAll();
 if(sheetKind==="pick") renderSheet();
 }
-async function onUser(user){
-fb.user = user;
+async function connectShared(){
+if(!fb) return;
 if(fb.unsub){ fb.unsub(); fb.unsub = null; }
-if(!user){
-fb.ref = null; setSyncLocal();
-let skip = false; try{ skip = sessionStorage.getItem("smc-skip-auth")==="1"; }catch(e){}
-if(!skip) setTimeout(()=>{ if(!fb.user && !sheetKind) openSheet("auth"); }, 400);
-return;
-}
-try{ sessionStorage.removeItem("smc-skip-auth"); localStorage.removeItem("smc-skip-auth"); }catch(e){}
-if(sheetKind==="auth") closeSheet();
-fb.ref = fb.SDK.doc(fb.db, "users", user.uid);
 setSync("กำลังซิงก์…");
 try{
 const snap = await fb.SDK.getDoc(fb.ref);
 const remote = snap.exists() ? parseRemote(snap.data()) : null;
 if(remote){
-let synced = ""; try{ synced = localStorage.getItem("smc-synced-uid") || ""; }catch(e){}
-if(synced === user.uid){
+let synced = ""; try{ synced = localStorage.getItem("smc-synced-shared") || ""; }catch(e){}
+if(synced === "1"){
 if((remote.u||0) > (state.u||0)) adopt(remote);
 else if((state.u||0) > (remote.u||0)) await fbPushNow();
 } else {
@@ -1092,16 +1080,15 @@ if(!same) await fbPushNow();
 } else {
 await fbPushNow();
 }
-try{ localStorage.setItem("smc-synced-uid", user.uid); }catch(e){}
+try{ localStorage.setItem("smc-synced-shared","1"); }catch(e){}
 fb.unsub = fb.SDK.onSnapshot(fb.ref, s=>{
 if(!s.exists() || (s.metadata && s.metadata.hasPendingWrites)) return;
 const r = parseRemote(s.data());
 if(r && (r.u||0) > (state.u||0)) adopt(r);
-});
+}, ()=>{});
 setSyncOn();
-toast("เข้าสู่ระบบแล้ว ซิงก์เรียบร้อย");
 }catch(e){
-setSync("ซิงก์ไม่สำเร็จ ข้อมูลยังอยู่ในเครื่อง", {k:"out", t:"ออกจากระบบ"});
+setSync("ซิงก์ไม่สำเร็จ ข้อมูลยังอยู่ในเครื่อง", {k:"retry", t:"ลองใหม่"});
 }
 }
 async function startSync(){
@@ -1109,13 +1096,13 @@ if(!FBCFG || !FBCFG.apiKey) return;
 try{
 const SDK = window.__FB_MOCK || await (async ()=>{
 const base = "https://www.gstatic.com/firebasejs/10.14.1/";
-const mods = await Promise.all([import(base+"firebase-app.js"), import(base+"firebase-auth.js"), import(base+"firebase-firestore.js")]);
+const mods = await Promise.all([import(base+"firebase-app.js"), import(base+"firebase-firestore.js")]);
 return Object.assign({}, ...mods);
 })();
 const app = SDK.initializeApp(FBCFG);
-fb = {SDK, auth: SDK.getAuth(app), db: SDK.getFirestore(app), user: null, ref: null, unsub: null};
-setSyncLocal();
-SDK.onAuthStateChanged(fb.auth, onUser);
+const db = SDK.getFirestore(app);
+fb = {SDK, db, user: {email:"shared"}, ref: SDK.doc(db, "shared", "tracker"), unsub: null};
+connectShared();
 }catch(e){ fb = null; setSyncLocal(); }
 }
 function renderAuth(){

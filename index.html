@@ -462,7 +462,7 @@ ol.topics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 <script>
 (function(){
 const LS_KEY = "smc-tracker-v1";
-const STATE_V = 2;
+const STATE_V = 3;
 const SEED = [["Market Structure พื้นฐาน (HH, HL, LH, LL)",["EP.01 Bullish Trend (15:54) https://youtu.be/QFzrW-CYs9o","EP.02 Bearish Trend (13:47) https://youtu.be/ntFPB44EPdM","เปิดกราฟมาควรเริ่มหาโครงสร้างจากตรงไหนดี (29:54) https://youtu.be/EI17HjyeIos"]],["BOS และ CHoCH",["EP.03 BOS + CHoCH (13:57) https://youtu.be/r1pur3CQ0Eo","แกะวิธีคิดรายใหญ่: CHoCH จริงหรือหลอกใน LTF (2:35:46, เสริม) https://youtu.be/lCbO1mJrSFg"]],["Order Block",["Bullish Order Block (12:36) https://youtu.be/o-Kgkd-9VWg","Bearish Order Block (10:07) https://youtu.be/gfK8kvws504","ทำไมบางกราฟมาไม่ถึงโซน Order Block (15:04) https://youtu.be/MnBGtTO_bII","Order Block Inside Bar (21:51) https://youtu.be/QWJey-tE3yg"]],["Premium / Discount",["Fibonacci Retracement ใช้ยังไงให้ได้ผล (26:53) https://youtu.be/YVBClvqupec"]],["Entry Model และ Risk Management",["Aggressive Entry vs Confirmation Entry (15:44) https://youtu.be/Qy3e16gN5gg","ตกรถจังหวะแรก ควรเข้าที่ไหนดี (31:09) https://youtu.be/iDLgHiV9gJE","วิธีแก้ไม้ใน Low Time Frame (22:41) https://youtu.be/iy3g9ZEeNTU","เทรด SMC ยังไงไม่ให้แพ้บ่อย (30:32) https://youtu.be/SHq5ENt18xA","Indicator คำนวณ Lot (8:49) https://youtu.be/0fMn-n7wFEA"]],["Mitigation และ Breaker Block",["Hidden Base Zone (19:35) https://youtu.be/n7skwQ8XPV8","Breaker Block (18:39) https://youtu.be/C0cdj9TJx6I"]],["Swing Structure กับ Internal Structure",["Q&A EP.01 ถ้าเจอ Swing กว้าง เข้าออเดอร์ยังไง (44:02) https://youtu.be/3UOQ7zdAPZg","Market Structure & Inducement 2024 (45:21) https://youtu.be/h_Vwpf1OYUI"]],["Inducement และ Liquidity Sweep",["Inducement หรือ CHoCH ดูยังไงไม่ให้สับสน (39:00) https://youtu.be/__n_Q9OAWR4","3 Step Trade Liquidity Sweep https://youtu.be/YLMAu6sM7ds","Sweep Liquidity Entry Model https://youtu.be/34tivUiaf1w"]],["Multi-timeframe: HTF bias สู่ LTF entry",["5 Step High Time Frame (22:34) https://youtu.be/WKUkA4UqROM","4 Step Low Time Frame (14:25) https://youtu.be/t5jEINcfCsM","Multi-Timeframe Confirmation 2 Timeframe (21:49) https://youtu.be/WSQmt6iXcqs"]],["Liquidity (BSL, SSL, Equal High/Low)",["Liquidity EP.01 สภาพคล่องคืออะไร (21:34) https://youtu.be/dnhipnkbPbI","Liquidity EP.02 มองสภาพคล่องออก ลดโอกาสโดนกิน (20:50) https://youtu.be/W2piNWDCW0U"]],["Session และ Killzone (เอเชีย ลอนดอน นิวยอร์ก)",["New York Session คอนเฟิร์ม M1 เวลาไหนปลอดภัย https://youtu.be/QL76JbJOGoY","Liquidity Asia Session (ชอบเทรดทองห้ามมองข้าม) https://youtu.be/ZQur1BtiKjM"]],["ดูตัวอย่างเทรดจริง: Trade Breakdown ทองคำ",["EP.04 BUY XAUUSD +8.3RR https://youtu.be/USjIWm-jnN4","EP.08 SELL XAUUSD +12RR https://youtu.be/mImFdmk0p1I","EP.09 SELL XAUUSD สวนโครงสร้าง +11RR https://youtu.be/B5_9D6a8fCY","EP.11 BUY XAUUSD +12RR https://youtu.be/2cuYMkUs3FY","EP.14 SELL XAUUSD +42RR https://youtu.be/z3v_rZf0YOA"]]];
 const DROPPED = ["Strong / Weak High-Low","Fair Value Gap (FVG)"];
 const CHECK = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
@@ -481,8 +481,10 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt
 const $ = id => document.getElementById(id);
 function parseLink(s){ const m = String(s||"").match(/https?:\/\/\S+/); const url = m ? m[0] : ""; const label = (url ? s.replace(url,"") : s).trim(); return {url, label: label || url}; }
 function linkHtml(s){ const {url,label} = parseLink(s); return url ? `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(label)}</a>` : `<span>${esc(label)}</span>`; }
+function seedId(title){ let h=5381; for(const c of String(title)) h=((h*33)^c.codePointAt(0))>>>0; return "s"+h.toString(36); }
+const SEED_IDS = new Map(SEED.map(s=>[s[0], seedId(s[0])]));
 function freshState(){
-return { v:STATE_V, topics: SEED.map(s => ({id:uid(), title:s[0], status:"todo", links:s[1].slice(), summary:""})), logs:[] };
+return { v:STATE_V, topics: SEED.map(s => ({id:seedId(s[0]), title:s[0], status:"todo", links:s[1].slice(), summary:""})), logs:[] };
 }
 function valid(s){ return s && Array.isArray(s.topics) && Array.isArray(s.logs); }
 function migrate(s){
@@ -494,14 +496,18 @@ const out = [], taken = new Set();
 for(const [title,links] of SEED){
 const t = byTitle.get(title);
 if(t){ if(!t.links.length) t.links = links.slice(); taken.add(t.id); out.push(t); }
-else out.push({id:uid(), title, status:"todo", links:links.slice(), summary:""});
+else out.push({id:seedId(title), title, status:"todo", links:links.slice(), summary:""});
 }
 for(const t of s.topics){
 if(taken.has(t.id)) continue;
 if(DROPPED.includes(t.title) && t.status==="todo" && !used.has(t.id) && !t.summary && !t.links.length) continue;
 out.push(t);
 }
-s.topics = out; s.v = STATE_V;
+s.topics = out;
+const remap = new Map(), usedIds = new Set(out.map(t=>t.id));
+for(const t of s.topics){ const sid = SEED_IDS.get(t.title); if(sid && t.id !== sid && !usedIds.has(sid)){ remap.set(t.id, sid); usedIds.add(sid); t.id = sid; } }
+if(remap.size) for(const l of s.logs){ if(remap.has(l.topicId)) l.topicId = remap.get(l.topicId); }
+s.v = STATE_V;
 return {s, changed:true};
 }
 let state;
@@ -814,7 +820,7 @@ const act = b.dataset.s;
 if(act==="close"){ closeSheet(); return; }
 if(act==="signin"){ doAuth("in"); return; }
 if(act==="signup"){ doAuth("up"); return; }
-if(act==="skip"){ try{ localStorage.setItem("smc-skip-auth","1"); }catch(e){} closeSheet(); setSyncLocal(); return; }
+if(act==="skip"){ try{ sessionStorage.setItem("smc-skip-auth","1"); }catch(e){} closeSheet(); setSyncLocal(); return; }
 if(act==="savelog"){
 const l = state.logs.find(x=>x.id===sheetId); if(!l) return;
 const ls = [...$("sheet").querySelectorAll(".eLine")].map(i=>i.value.trim());
@@ -1017,6 +1023,26 @@ const seen = new Set(), out = [];
 for(const l of a.concat(b)){ if(!seen.has(l.id)){ seen.add(l.id); out.push(l); } }
 return out.sort((x,y)=>(x.at||0)-(y.at||0));
 }
+const RANK = {todo:0, learning:1, done:2};
+function mergeStates(remote, local){
+const nw = (remote.u||0) >= (local.u||0) ? remote : local, od = nw===remote ? local : remote;
+const oMap = new Map(od.topics.map(t=>[t.id,t])), seen = new Set();
+const topics = nw.topics.map(t=>{
+seen.add(t.id);
+const m = Object.assign({}, t, {links: t.links.slice()}), o = oMap.get(t.id);
+if(o){
+if((RANK[o.status]||0) > (RANK[m.status]||0)) m.status = o.status;
+if(!(m.summary||"").trim() && (o.summary||"").trim()) m.summary = o.summary;
+for(const l of o.links) if(!m.links.includes(l)) m.links.push(l);
+}
+return m;
+});
+for(const t of od.topics) if(!seen.has(t.id)) topics.push(JSON.parse(JSON.stringify(t)));
+const byId = new Map();
+for(const l of nw.logs.concat(od.logs)){ const p = byId.get(l.id); if(!p) byId.set(l.id, l); else if(l.qdone && !p.qdone) byId.set(l.id, Object.assign({}, p, {qdone:true})); }
+const logs = Array.from(byId.values()).sort((x,y)=>(x.at||0)-(y.at||0));
+return Object.assign({}, nw, {topics, logs, u: Math.max(remote.u||0, local.u||0)});
+}
 function parseRemote(data){
 try{ const r = migrate(JSON.parse(data.json)).s; return valid(r) ? r : null; }catch(e){ return null; }
 }
@@ -1040,11 +1066,11 @@ fb.user = user;
 if(fb.unsub){ fb.unsub(); fb.unsub = null; }
 if(!user){
 fb.ref = null; setSyncLocal();
-let skip = false; try{ skip = localStorage.getItem("smc-skip-auth")==="1"; }catch(e){}
+let skip = false; try{ skip = sessionStorage.getItem("smc-skip-auth")==="1"; }catch(e){}
 if(!skip) setTimeout(()=>{ if(!fb.user && !sheetKind) openSheet("auth"); }, 400);
 return;
 }
-try{ localStorage.removeItem("smc-skip-auth"); }catch(e){}
+try{ sessionStorage.removeItem("smc-skip-auth"); localStorage.removeItem("smc-skip-auth"); }catch(e){}
 if(sheetKind==="auth") closeSheet();
 fb.ref = fb.SDK.doc(fb.db, "users", user.uid);
 setSync("กำลังซิงก์…");
@@ -1052,14 +1078,21 @@ try{
 const snap = await fb.SDK.getDoc(fb.ref);
 const remote = snap.exists() ? parseRemote(snap.data()) : null;
 if(remote){
-const newer = (remote.u||0) > (state.u||0) ? remote : state;
-const merged = Object.assign({}, newer, {logs: mergeLogs(remote.logs, state.logs)});
-merged.u = Math.max(remote.u||0, state.u||0);
+let synced = ""; try{ synced = localStorage.getItem("smc-synced-uid") || ""; }catch(e){}
+if(synced === user.uid){
+if((remote.u||0) > (state.u||0)) adopt(remote);
+else if((state.u||0) > (remote.u||0)) await fbPushNow();
+} else {
+const merged = mergeStates(remote, state);
+const same = JSON.stringify(merged) === JSON.stringify(remote);
+if(!same) merged.u = Math.max(Date.now(), (remote.u||0)+1, (state.u||0)+1);
 adopt(merged);
-if(JSON.stringify(merged) !== JSON.stringify(remote)) await fbPushNow();
+if(!same) await fbPushNow();
+}
 } else {
 await fbPushNow();
 }
+try{ localStorage.setItem("smc-synced-uid", user.uid); }catch(e){}
 fb.unsub = fb.SDK.onSnapshot(fb.ref, s=>{
 if(!s.exists() || (s.metadata && s.metadata.hasPendingWrites)) return;
 const r = parseRemote(s.data());
